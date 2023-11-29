@@ -24,30 +24,30 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public void register(RegisterRequest request) {
-
+    //TODO fare i soliti controlli di sicurezza
         Utente utente = Utente.builder()
                 .nome(request.getNome())
                 .cognome(request.getCognome())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .ruolo(Ruolo.PAZIENTE) //todo chiedere quale utente devo inserire
+                .ruolo(Ruolo.PAZIENTE) //TODO il ruolo deve far parte della request (quindi deve sceglierlo l'utente)
                 .build();
 
         repository.save(utente);
     }
 
     public LoginResponse authenticate(AuthenticationRequest request) {
-        System.out.println("popo1");
+        //TODO fare i soliti controlli di sicurezza
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        System.out.println("popo2");
+
         Utente utente = repository.findByEmail(request.getEmail())
                 .orElseThrow();
-        System.out.println("popo3");
+
         return LoginResponse.builder()
                 .jwt(jwtService.generateToken(utente))
                 .build();
