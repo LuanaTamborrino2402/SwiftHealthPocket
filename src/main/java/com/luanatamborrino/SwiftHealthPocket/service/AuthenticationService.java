@@ -1,6 +1,7 @@
 package com.luanatamborrino.SwiftHealthPocket.service;
 
 import com.luanatamborrino.SwiftHealthPocket.dto.response.LoginResponse;
+import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
 import com.luanatamborrino.SwiftHealthPocket.security.JwtService;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.AuthenticationRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.RegisterRequest;
@@ -25,6 +26,7 @@ public class AuthenticationService {
 
     public void register(RegisterRequest request) {
     //TODO fare i soliti controlli di sicurezza
+
         Utente utente = Utente.builder()
                 .nome(request.getNome())
                 .cognome(request.getCognome())
