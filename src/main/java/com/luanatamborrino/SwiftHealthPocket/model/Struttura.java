@@ -28,8 +28,8 @@ public class Struttura {
     private Integer cap;
 
     @OneToMany(mappedBy = "struttura", fetch = FetchType.LAZY)
-    private List<Utente> infermieri;
+    private List<Utente> infermieri; //Lista di infermieri assegnati ad una struttura.
 
     @OneToMany(mappedBy = "struttura", fetch = FetchType.LAZY)
-    private List<Prestazione> prestazioni;
+    private List<Prestazione> prestazioni; //Lista di prestazioni associate ad una struttura.
 }

@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-
 
 @Data
 @AllArgsConstructor
@@ -37,9 +34,9 @@ public class Recensione {
 
     @ManyToOne
     @JoinColumn(name = "id_utente")
-    private Utente paziente;
+    private Utente paziente; //Paziente che recensisce.
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_recensione", referencedColumnName = "id_prestazione")
-    private Prestazione prestazione;
+    private Prestazione prestazione; //Prestazione recensita.
 }

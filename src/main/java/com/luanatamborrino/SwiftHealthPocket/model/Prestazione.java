@@ -1,11 +1,11 @@
 package com.luanatamborrino.SwiftHealthPocket.model;
 
+import com.luanatamborrino.SwiftHealthPocket.model._enum.EsitoPrestazione;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.TipoPrestazione;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -37,17 +37,17 @@ public class Prestazione {
 
     @ManyToOne
     @JoinColumn( name = "id_paziente")
-    private Utente paziente;
+    private Utente paziente; //Il paziente recensisce la prestazione.
 
     @ManyToOne
     @JoinColumn( name = "id_infermiere")
-    private Utente infermiere;
+    private Utente infermiere; //Infermiere recensisce la prestazione.
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_prestazione", referencedColumnName = "id_recensione")
-    private Recensione recensione;
+    private Recensione recensione; //Recensione effettuata alla prestazione.
 
     @ManyToOne
     @JoinColumn(name = "id_struttura")
-    private Struttura struttura;
+    private Struttura struttura; //Struttura dove viene effettuata la prestazione.
 }

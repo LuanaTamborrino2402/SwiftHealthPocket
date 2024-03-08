@@ -11,16 +11,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity //Utilizzata per abilitare la configurazione di Spring Security nell'applicazione.
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-
     private final AuthenticationProvider authenticationProvider;
 
+    /**
+     * Bean utilizzato all'avvio dell'applicazione per configurare il filtro di sicurezza per gestire le richieste http.
+     * @param http
+     * @return Istanza del filtro di sicurezza configurato.
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+
         http
                 .cors()
                 .and()

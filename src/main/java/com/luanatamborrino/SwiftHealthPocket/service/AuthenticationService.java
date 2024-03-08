@@ -5,7 +5,7 @@ import com.luanatamborrino.SwiftHealthPocket.exception.*;
 import com.luanatamborrino.SwiftHealthPocket.security.JwtService;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.AuthenticationRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.RegisterRequest;
-import com.luanatamborrino.SwiftHealthPocket.model.Ruolo;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
