@@ -1,6 +1,5 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
-import com.luanatamborrino.SwiftHealthPocket.dto.response.LoginResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.UserResponse;
 import com.luanatamborrino.SwiftHealthPocket.service.UtenteService;
 import lombok.RequiredArgsConstructor;
