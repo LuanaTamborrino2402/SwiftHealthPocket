@@ -1,8 +1,10 @@
 package com.luanatamborrino.SwiftHealthPocket.repository;
 
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,4 +19,8 @@ public interface UserRepository extends JpaRepository<Utente,Long> {
      * @return L'utente con quell'email.
      */
     Optional<Utente> findByEmail(String email);
+
+    List<Utente> findAllByRuolo(Ruolo ruolo);
+
+
 }
