@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "Struttura")
 @Table(name = "struttura")
 public class Struttura {

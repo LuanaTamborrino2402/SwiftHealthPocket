@@ -76,7 +76,7 @@ public class AuthenticationService {
     }
 
     public LoginResponse authenticate(AuthenticationRequest request) {
-        //TODO fare i soliti controlli di sicurezza
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
