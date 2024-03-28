@@ -1,9 +1,9 @@
 package com.luanatamborrino.SwiftHealthPocket.service;
 
-import com.luanatamborrino.SwiftHealthPocket.dto.request.CreaStrutturaRequest;
+import com.luanatamborrino.SwiftHealthPocket.dto.request.CreaModificaStrutturaRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.StrutturaResponse;
-import com.luanatamborrino.SwiftHealthPocket.dto.response.UserResponse;
 import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
+import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorException;
 import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
@@ -21,7 +21,7 @@ public class StrutturaService {
 
     private final StrutturaRepository repository;
 
-    public void creaStruttura(CreaStrutturaRequest request){
+    public void creaStruttura(CreaModificaStrutturaRequest request){
 
         //Controllo se almeno un campo è vuoto.
         if(request.getNome().isEmpty() || request.getNome().isBlank() ||
@@ -95,5 +95,64 @@ public class StrutturaService {
 
         //Restituisco la lista di strutture.
         return response;
+    }
+
+    public StrutturaResponse updateStruttura(Long id, CreaModificaStrutturaRequest request ){
+
+        //controllo che l'id parta da 1.
+        if(id < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        Optional<Struttura> optionalStruttura = repository.findById(id);
+
+        if (optionalStruttura.isEmpty()){
+            throw new NotFoundException("Struttura non trovata.");
+        }
+
+        Struttura struttura = optionalStruttura.get();
+
+        if(!request.getNome().isBlank() && !request.getNome().isEmpty()){
+            struttura.setNome(request.getNome());
+        }
+
+        if(!request.getIndirizzo().isBlank() && !request.getIndirizzo().isEmpty()){
+            struttura.setIndirizzo(request.getIndirizzo());
+        }
+
+        if(request.getCap() != null && String.valueOf(request.getCap()).length() == 5 ){
+            struttura.setCap(request.getCap());
+        }
+
+        repository.save(struttura);
+
+        return new StrutturaResponse(
+                struttura.getId(),
+                struttura.getNome(),
+                struttura.getIndirizzo(),
+                struttura.getCap());
+    }
+
+    public void deleteStrutturaById(Long id){
+
+        //controllo che l'id parta da 1.
+        if(id < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        Optional<Struttura> struttura = repository.findById(id);
+
+        if (struttura.isEmpty()){
+            throw new NotFoundException("Struttura non trovata.");
+        }
+
+        repository.deleteById(struttura.get().getId());
+
+        Optional<Struttura> strutturaDeleted = repository.findById(struttura.get().getId());
+
+        if(strutturaDeleted.isPresent()){
+            throw new InternalServerErrorException("Errore nell'eliminazione.");
+        }
+
     }
 }

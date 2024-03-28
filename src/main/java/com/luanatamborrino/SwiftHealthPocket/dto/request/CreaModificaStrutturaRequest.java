@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreaStrutturaRequest {
+public class CreaModificaStrutturaRequest {
 
     private String nome;
 

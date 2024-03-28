@@ -1,9 +1,8 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
-import com.luanatamborrino.SwiftHealthPocket.dto.request.CreaStrutturaRequest;
+import com.luanatamborrino.SwiftHealthPocket.dto.request.CreaModificaStrutturaRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.MessageResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.StrutturaResponse;
-import com.luanatamborrino.SwiftHealthPocket.dto.response.UserResponse;
 import com.luanatamborrino.SwiftHealthPocket.service.StrutturaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class StrutturaController {
     private final StrutturaService strutturaService;
 
     @PostMapping("/creaStruttura")
-    public ResponseEntity<MessageResponse> creaStruttura (@RequestBody CreaStrutturaRequest request){
+    public ResponseEntity<MessageResponse> creaStruttura (@RequestBody CreaModificaStrutturaRequest request){
 
         strutturaService.creaStruttura(request);
 
@@ -52,5 +51,30 @@ public class StrutturaController {
                 .status(HttpStatus.OK)
                 .body(response);
 
+    }
+
+    @PutMapping("/updateStruttura/{id}")
+    public ResponseEntity<StrutturaResponse> updateStruttura(@PathVariable String id, @RequestBody CreaModificaStrutturaRequest request){
+
+        long strutturaId = Long.parseLong(id);
+
+        final StrutturaResponse response = strutturaService.updateStruttura(strutturaId,request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
+    }
+
+    @DeleteMapping("/deleteStrutturaById/{id}")
+    public ResponseEntity<MessageResponse> deleteStrutturaById(@PathVariable String id){
+
+        long strutturaId = Long.parseLong(id);
+
+        strutturaService.deleteStrutturaById(strutturaId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Struttura eliminata."));
     }
 }
