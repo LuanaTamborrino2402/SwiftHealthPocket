@@ -1,5 +1,6 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
+import com.luanatamborrino.SwiftHealthPocket.dto.request.AssociaDissociaInfermiereRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.CreaModificaStrutturaRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.MessageResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.StrutturaResponse;
@@ -76,5 +77,15 @@ public class StrutturaController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Struttura eliminata."));
+    }
+
+    @PostMapping("/associaInfermiere")
+    public ResponseEntity<MessageResponse> associaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
+
+        strutturaService.associaInfermiere(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Infermiere associato."));
     }
 }

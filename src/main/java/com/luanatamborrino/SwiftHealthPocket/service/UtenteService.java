@@ -17,47 +17,60 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service per gestire tutti i metodi riguardanti l'utente.
+ */
 @Service
 @RequiredArgsConstructor
 public class UtenteService {
 
-    private final UserRepository repository;
-
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponse getUserData(Long id){
+    /**
+     * Metodo che, dato un id, prende l'utente dal database tramite la repository e lo ritorna al controller.
+     * @param userId Id dell'utente.
+     * @return DTO con i dati dell'utente.
+     */
+    public UserResponse getUserData(Long userId){
 
-        //controllo che l'id parta da 1.
-        if(id < 1) {
+        //Controllo che l'id parta da 1.
+        if(userId < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
         //Controllo se è presente un utente con quell'id.
-        Optional<Utente> user = repository.findById(id);
+        Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'ID fornito, viene lanciata l'eccezione.
         if(user.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Se esiste, viene creato e resituito il nuovo oggetto Utente.
-        return new UserResponse(user.get().getIdUtente(),
+        //Ritorno il DTO con i dati dell'utente richiesto.
+        return new UserResponse(
+                user.get().getIdUtente(),
                 user.get().getNome(),
                 user.get().getCognome(),
                 user.get().getPassword(),
                 user.get().getEmail(),
-                user.get().getRuolo());
+                user.get().getRuolo()
+        );
     }
 
-    public void deleteUserById(Long id){
+    /**
+     * Metodo che, dato l'id, viene eliminato l'utente dal database.
+     * @param userId Id dell'utente da eliminare.
+     */
+    public void deleteUserById(Long userId){
 
         //controllo che l'id parta da 1.
-        if(id < 1) {
+        if(userId < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
         //Controllo se è presente un utente con quell'id.
-        Optional<Utente> user = repository.findById(id);
+        Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
         if(user.isEmpty()){
@@ -65,10 +78,10 @@ public class UtenteService {
         }
 
         //Elimino l'utente trovato dal database.
-        repository.deleteById(user.get().getIdUtente());
+        userRepository.deleteById(user.get().getIdUtente());
 
         //Verifico se l'utente è stato effettivamente eliminato.
-        Optional<Utente> userDeleted = repository.findById(user.get().getIdUtente());
+        Optional<Utente> userDeleted = userRepository.findById(user.get().getIdUtente());
 
         //Se l'utente è ancora presente dopo la cancellazione, lancio l'eccezione.
         if(userDeleted.isPresent()){
@@ -76,10 +89,14 @@ public class UtenteService {
         }
     }
 
+    /**
+     * Metodo che, dato l'indirizzo email, l'utente viene eliminato dal database.
+     * @param email Email dell'utente da eliminare.
+     */
     public void deleteUserByEmail(String email){
 
         //Ricerca dell'utente corrispondente all'indirizzo email fornito.
-        Optional<Utente> user = repository.findByEmail(email);
+        Optional<Utente> user = userRepository.findByEmail(email);
 
         //Se non viene trovato alcun utente con l'indirizzo email fornito, lancio l'eccezione.
         if(user.isEmpty()){
@@ -87,10 +104,10 @@ public class UtenteService {
         }
 
         //Elimino l'utente dal database.
-        repository.delete(user.get());
+        userRepository.delete(user.get());
 
         //Verifico se l'utente è stato effettivamente eliminato.
-        Optional<Utente> userDeleted = repository.findByEmail(user.get().getEmail());
+        Optional<Utente> userDeleted = userRepository.findByEmail(user.get().getEmail());
 
         //Se l'utente è ancora presente dopo la cancellazione, lancio l'eccezione.
         if(userDeleted.isPresent()){
@@ -98,11 +115,14 @@ public class UtenteService {
         }
     }
 
-
+    /**
+     * Metodo che restituisce la lista degli utenti presenti sul database.
+     * @return Lista di DTO con i dati di ogni utente.
+     */
     public List<UserResponse> getAllUsers(){
 
         //Prendo tutti gli utenti dal database.
-        List<Utente> userList = repository.findAll();
+        List<Utente> userList = userRepository.findAll();
 
         //Se non vè presente nessun utetne, lancio l'eccezione.
         if(userList.isEmpty()){
@@ -114,19 +134,25 @@ public class UtenteService {
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
         for (Utente user : userList ){
-            response.add(new UserResponse(user.getIdUtente(),
+            response.add(new UserResponse(
+                    user.getIdUtente(),
                     user.getNome(),
                     user.getCognome(),
                     user.getPassword(),
                     user.getEmail(),
-                    user.getRuolo()));
+                    user.getRuolo()
+            ));
         }
 
-        //Restituisco la lista di utenti.
+        //Restituisco il DTO.
         return response;
     }
 
-
+    /**
+     * Metodo che restituisce la lista degli utenti in base al ruolo.
+     * @param ruolo Ruolo dell'utente.
+     * @return Lista di DTO con i dati di ogni utente.
+     */
     public List<UserResponse> getAllUsersByRole(String ruolo){
 
         //Controllo se il ruolo è valido e poi lo assegno.
@@ -140,7 +166,7 @@ public class UtenteService {
         }
 
         //Recupero tutti gli utenti con il ruolo specificato.
-        List<Utente> userList = repository.findAllByRuolo(ruoloDaCercare);
+        List<Utente> userList = userRepository.findAllByRuolo(ruoloDaCercare);
 
         //Se non ci sono utenti nel database con il ruolo specificato, lancio l'eccezione.
         if(userList.isEmpty()){
@@ -152,27 +178,35 @@ public class UtenteService {
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
         for(Utente user : userList ){
-            response.add(new UserResponse(user.getIdUtente(),
+            response.add(new UserResponse(
+                    user.getIdUtente(),
                     user.getNome(),
                     user.getCognome(),
                     user.getPassword(),
                     user.getEmail(),
-                    user.getRuolo()));
+                    user.getRuolo()
+            ));
         }
 
-        //Restituisco la lista di utenti.
+        //Restituisco IL DTO.
         return response;
     }
 
-    public UserResponse updateUserData(Long id, UpdateUserDataRequest request){
+    /**
+     * Metodo utilizzato per modificare i dati di un utente.
+     * @param userId Id dell'utente da modificare.
+     * @param request DTO con i nuovi dati.
+     * @return DTO con tutti i dati dell'utente modificati.
+     */
+    public UserResponse updateUserData(Long userId, UpdateUserDataRequest request){
 
         //controllo che l'id parta da 1.
-        if(id < 1) {
+        if(userId < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
         //Controllo se è presente un utente con quell'id.
-        Optional<Utente> optionalUser = repository.findById(id);
+        Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
         if(optionalUser.isEmpty()){
@@ -192,13 +226,13 @@ public class UtenteService {
             user.setCognome(request.getCognome());
         }
 
-        ////Controllo se il campo dell'indirizzo email non è vuoto, non contiene solo spazi bianchi e non coincide con quello attuale.
+        //Controllo se il campo dell'indirizzo email non è vuoto, non contiene solo spazi bianchi e non coincide con quello attuale.
         if(!request.getEmail().isBlank() &&
                 !request.getEmail().isEmpty() &&
                 !request.getEmail().equals(user.getEmail())){
 
             //Controllo se esiste già un utente con il nuovo indirizzo email.
-            Optional<Utente> userWithEmail = repository.findByEmail(request.getEmail());
+            Optional<Utente> userWithEmail = userRepository.findByEmail(request.getEmail());
 
             //Se esiste, lancio l'eccezione.
             if(userWithEmail.isPresent()){
@@ -225,14 +259,16 @@ public class UtenteService {
         }
 
         //Salvo le modifiche apportate.
-        repository.save(user);
+        userRepository.save(user);
 
-        //Ritorno un nuovo oggetto UserResponse che conterrà i dettagli aggiornati dell'utente.
-        return new UserResponse(user.getIdUtente(),
+        //Ritorno il DTO che conterrà i dettagli aggiornati dell'utente.
+        return new UserResponse(
+                user.getIdUtente(),
                 user.getNome(),
                 user.getCognome(),
                 user.getPassword(),
                 user.getEmail(),
-                user.getRuolo());
+                user.getRuolo()
+        );
     }
 }
