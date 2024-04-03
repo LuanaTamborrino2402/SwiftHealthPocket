@@ -271,4 +271,28 @@ public class UtenteService {
                 user.getRuolo()
         );
     }
+
+    public void getDisponibilitaInfermiere(Long userId){
+
+        //controllo che l'id parta da 1.
+        if(userId < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        Optional<Utente> optionalUser = userRepository.findById(userId);
+
+        //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("Utente non trovato.");
+        }
+
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+            throw new BadRequestException("Ruolo non corretto.");
+        }
+
+        if(optionalUser.get().getStruttura() != null){
+            throw new BadRequestException("Infermiere non disponibile.");
+        }
+
+    }
 }

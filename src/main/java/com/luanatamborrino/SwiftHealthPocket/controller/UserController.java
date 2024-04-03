@@ -88,4 +88,17 @@ public class UserController {
                 .body(response);
 
     }
+
+    @GetMapping("/getDisponibilitaInfermiere/{id}")
+    public ResponseEntity<MessageResponse> getDisponibilitaInfermiere(@PathVariable String id){
+
+        long userId = Long.parseLong(id);
+
+        userService.getDisponibilitaInfermiere(userId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Utente disponibile."));
+
+    }
 }
