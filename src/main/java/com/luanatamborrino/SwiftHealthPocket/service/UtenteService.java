@@ -116,7 +116,7 @@ public class UtenteService {
     }
 
     /**
-     * Metodo che restituisce la lista degli utenti presenti sul database.
+     * Metodo per prendere tutti gli utenti presenti sul database.
      * @return Lista di DTO con i dati di ogni utente.
      */
     public List<UserResponse> getAllUsers(){

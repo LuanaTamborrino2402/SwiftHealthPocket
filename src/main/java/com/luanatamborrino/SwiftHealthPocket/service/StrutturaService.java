@@ -19,15 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Service per gestire tutti i metodi riguardanti la struttura.
+ */
 @Service
 @RequiredArgsConstructor
 public class StrutturaService {
 
     private final StrutturaRepository strutturaRepository;
-
     private final UserRepository userRepository;
 
+    /**
+     * Metodo per creare una struttura nel database.
+     * @param request DTO con i dati della creazione della struttura.
+     */
     public void creaStruttura(CreaModificaStrutturaRequest request){
 
         //Controllo se almeno un campo è vuoto.
@@ -54,6 +59,11 @@ public class StrutturaService {
         strutturaRepository.save(struttura);
     }
 
+    /**
+     * Metodo che, dato un id, prende la struttura dal database tramite la repository e la ritorna al controller.
+     * @param strutturaId Id della struttura.
+     * @return
+     */
     public StrutturaResponse getStrutturaData(Long strutturaId){
 
         //Controllo che l'id parta da 1.
@@ -78,6 +88,10 @@ public class StrutturaService {
         );
     }
 
+    /**
+     * Metodo per prenere tutte le strutture presenti sul databse.
+     * @return Lista di DTO con i dati di ogni struttura.
+     */
     public List<StrutturaResponse> getAllStrutture(){
 
         //Prendo tutte le strutture dal database.
@@ -93,21 +107,24 @@ public class StrutturaService {
 
         //Per ogni struttura trovata, creo un oggetto StrutturaResponse e lo aggiungo alla lista.
         for (Struttura struttura : strutture ){
-            response.add(
-                new StrutturaResponse(
+            response.add(new StrutturaResponse(
                     struttura.getId(),
                     struttura.getNome(),
                     struttura.getIndirizzo(),
                     struttura.getCap()
-                )
-            );
-
+                ));
         }
 
         //Restituisco il DTO.
         return response;
     }
 
+    /**
+     * Metodo utilizzato per modificare i dati di una struttura.
+     * @param strutturaId Id della struttura da modificare.
+     * @param request DTO con i nuovi dati.
+     * @return DTO con i dati della struttura modificata.
+     */
     public StrutturaResponse updateStruttura(Long strutturaId, CreaModificaStrutturaRequest request ){
 
         //Controllo che l'id parta da 1.
@@ -150,9 +167,14 @@ public class StrutturaService {
                 struttura.getId(),
                 struttura.getNome(),
                 struttura.getIndirizzo(),
-                struttura.getCap());
+                struttura.getCap()
+        );
     }
 
+    /**
+     *
+     * @param id Id della struttura da eliminare
+     */
     public void deleteStrutturaById(Long id){
 
         //controllo che l'id parta da 1.
@@ -204,24 +226,12 @@ public class StrutturaService {
         Utente user = optionalUser.get();
         Struttura struttura = optionalStruttura.get();
 
-        List<Struttura> strutture = strutturaRepository.findAll();
-
-        for(Struttura s : strutture){
-            if(s.getInfermieri().contains(user)){
-                throw new ConflictException("Infermiere già associato ad una struttura.");
-            }
+        if(user.getStruttura() != null){
+            throw new ConflictException("Utente già associato.");
         }
+        user.setStruttura(struttura);
 
-        //TODO fix
-        if(struttura.getInfermieri().isEmpty()){
-            struttura.setInfermieri(new ArrayList<>(List.of(user)));
-        }else {
-            struttura.getInfermieri().add(user);
-        }
-
-        strutturaRepository.save(struttura);
-
-
+        userRepository.save(user);
 
     }
 
@@ -253,9 +263,9 @@ public class StrutturaService {
         Utente user = optionalUser.get();
         Struttura struttura = optionalStruttura.get();
 
-        struttura.getInfermieri().remove(user);
+        user.setStruttura(null);
 
-        strutturaRepository.save(struttura);
+        userRepository.save(user);
 
     }
 }

@@ -79,7 +79,7 @@ public class StrutturaController {
                 .body(new MessageResponse("Struttura eliminata."));
     }
 
-    @PostMapping("/associaInfermiere")
+    @PutMapping("/associaInfermiere")
     public ResponseEntity<MessageResponse> associaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
 
         strutturaService.associaInfermiere(request);
@@ -88,4 +88,15 @@ public class StrutturaController {
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Infermiere associato."));
     }
+
+    @PutMapping("/dissociaInfermiere")
+    public ResponseEntity<MessageResponse> dissociaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
+
+        strutturaService.dissociaInfermiere(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Infermiere dissociato."));
+    }
+
 }

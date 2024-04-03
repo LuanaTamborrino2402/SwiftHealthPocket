@@ -28,7 +28,7 @@ public class AuthenticationService {
 
     /**
      * Metodo per registrare un utente nel database.
-     * @param request DTO con i dati della registrazione
+     * @param request DTO con i dati della registrazione.
      */
     public void register(RegisterRequest request) {
 
