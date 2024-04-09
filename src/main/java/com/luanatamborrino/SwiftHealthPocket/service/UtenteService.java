@@ -42,7 +42,7 @@ public class UtenteService {
         //Controllo se è presente un utente con quell'id.
         Optional<Utente> user = userRepository.findById(userId);
 
-        //Se non viene trovato alcun utente con l'ID fornito, viene lanciata l'eccezione.
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
         if(user.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
@@ -72,7 +72,7 @@ public class UtenteService {
         //Controllo se è presente un utente con quell'id.
         Optional<Utente> user = userRepository.findById(userId);
 
-        //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
         if(user.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
@@ -208,7 +208,7 @@ public class UtenteService {
         //Controllo se è presente un utente con quell'id.
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
-        //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
         if(optionalUser.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
@@ -272,6 +272,10 @@ public class UtenteService {
         );
     }
 
+    /**
+     * Metodo cerca la disponibilità di un infermiere identificato dall'id utente.
+     * @param userId Id dell'utente infermiere da cercare.
+     */
     public void getDisponibilitaInfermiere(Long userId){
 
         //controllo che l'id parta da 1.
@@ -279,20 +283,22 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
+        //Controllo se è presente un utente con quell'id.
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
-        //Se non viene trovato alcun utente con l'ID fornito, lancio l'eccezione.
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
         if(optionalUser.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
 
+        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
         if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
             throw new BadRequestException("Ruolo non corretto.");
         }
 
+        //Controllo se l'infermiere ha una struttura assegnata, lancio l'eccezione.
         if(optionalUser.get().getStruttura() != null){
             throw new BadRequestException("Infermiere non disponibile.");
         }
-
     }
 }

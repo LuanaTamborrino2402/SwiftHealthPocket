@@ -10,6 +10,7 @@ import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
+import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class StrutturaService {
 
     private final StrutturaRepository strutturaRepository;
     private final UserRepository userRepository;
+
+    private final Publisher publisher;
 
     /**
      * Metodo per creare una struttura nel database.
@@ -266,6 +269,8 @@ public class StrutturaService {
         user.setStruttura(null);
 
         userRepository.save(user);
+
+        publisher.notify("InfermiereDissociato");
 
     }
 }
