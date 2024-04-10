@@ -270,7 +270,18 @@ public class StrutturaService {
 
         userRepository.save(user);
 
-        publisher.notify("InfermiereDissociato");
+
+        Optional<Utente> optionalAdmin = userRepository.findByRuolo(Ruolo.AMMINISTRATORE);
+
+        if (optionalAdmin.isEmpty()){
+            throw new NotFoundException("Amministratore non trovato.");
+        }
+        publisher.notify("InfermiereDissociato",
+                user.getNome(),
+                user.getCognome(),
+                "",
+                "",
+                optionalAdmin.get().getEmail());
 
     }
 }

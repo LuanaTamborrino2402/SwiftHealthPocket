@@ -18,9 +18,9 @@ public class Publisher {
         listeners.remove(eventType);
     }
 
-    public void notify(String eventType){
+    public void notify(String eventType, String nome, String cognome, String tipoPrestazione, String esito, String emailDestinatario){
 
-        listeners.get(eventType).update();
+        listeners.get(eventType).update(nome, cognome, tipoPrestazione, esito, emailDestinatario);
 
     }
 }
