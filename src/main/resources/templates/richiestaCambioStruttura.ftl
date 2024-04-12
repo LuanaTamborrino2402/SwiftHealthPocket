@@ -34,18 +34,14 @@
 </head>
 <body>
 <div>
-    <p>Ciao!</p>
+    <p>Gentile amministratore,</p>
 
     <p>
-        Di seguito l'esito della tua prestazione:
-    <ul>
-        <li>Tipo prestazione: Tampone</li>
-        <li>Esito: Tampone positivo</li>
-    </ul>
+        L'infermiere <strong>${nomeInfermiere} ${cognomeInfermiere}</strong> ha richiesto un cambio struttura.
     </p>
 
     <p>
-        Buona giornata,<br><i>Il team SwiftHealthPocket</i>
+        Buon lavoro,<br><i>Il team SwiftHealthPocket</i>
     </p>
 </div>
 </body>

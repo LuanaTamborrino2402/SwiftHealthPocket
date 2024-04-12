@@ -36,7 +36,9 @@ public class EmailService {
                     StandardCharsets.UTF_8.name()
             );
             Template template = configuration.getTemplate(
-                    request.getEventType().equals("InfermiereDissociato") ? "infermiereDissociato.ftl" : "controlloEsito.ftl"
+                    request.getEventType().equals("InfermiereDissociato") ? "infermiereDissociato.ftl" :
+                            request.getEventType().equals("ControlloEsito") ? "controlloEsito.ftl" :
+                                    "richiestaCambioStruttura.ftl"
             );
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, request.getDatiDinamici());
             helper.setTo(request.getEmailDestinatario());

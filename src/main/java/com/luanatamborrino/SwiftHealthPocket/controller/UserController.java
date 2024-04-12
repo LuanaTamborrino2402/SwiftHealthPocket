@@ -138,4 +138,17 @@ public class UserController {
                 .body(new MessageResponse("Utente disponibile."));
 
     }
+
+    @GetMapping("/richiestaCambioStruttura/{id}")
+    public ResponseEntity<MessageResponse> richiestaCambioStruttura(@PathVariable String id){
+
+        long userId = Long.parseLong(id);
+
+        userService.richiestaCambioStruttura(userId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Richiesta effettuata."));
+
+    }
 }

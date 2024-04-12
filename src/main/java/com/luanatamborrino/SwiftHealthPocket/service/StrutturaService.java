@@ -64,25 +64,25 @@ public class StrutturaService {
 
     /**
      * Metodo che, dato un id, prende la struttura dal database tramite la repository e la ritorna al controller.
-     * @param strutturaId Id della struttura.
-     * @return
+     * @param idStruttura Id della struttura.
+     * @return DTO con i dati della struttura.
      */
-    public StrutturaResponse getStrutturaData(Long strutturaId){
+    public StrutturaResponse getStrutturaData(Long idStruttura){
 
         //Controllo che l'id parta da 1.
-        if(strutturaId < 1) {
+        if(idStruttura < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
         //Controllo se è presente una struttura con quell'id.
-        Optional<Struttura> struttura = strutturaRepository.findById(strutturaId);
+        Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
         //Se non viene trovata alcua struttura con l'ID fornito, viene lanciata l'eccezione.
         if(struttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
-        //Se esiste, viene creato e resituito il nuovo oggetto Struttura.
+        //Ritorno il DTO con i dati dell'utente richiesto.
         return new StrutturaResponse(
                 struttura.get().getId(),
                 struttura.get().getNome(),
@@ -124,19 +124,19 @@ public class StrutturaService {
 
     /**
      * Metodo utilizzato per modificare i dati di una struttura.
-     * @param strutturaId Id della struttura da modificare.
+     * @param idStruttura Id della struttura da modificare.
      * @param request DTO con i nuovi dati.
      * @return DTO con i dati della struttura modificata.
      */
-    public StrutturaResponse updateStruttura(Long strutturaId, CreaModificaStrutturaRequest request ){
+    public StrutturaResponse updateStruttura(Long idStruttura, CreaModificaStrutturaRequest request ){
 
         //Controllo che l'id parta da 1.
-        if(strutturaId < 1) {
+        if(idStruttura < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
         //Controllo se è presente una struttura con quell'id.
-        Optional<Struttura> strutturaExists = strutturaRepository.findById(strutturaId);
+        Optional<Struttura> strutturaExists = strutturaRepository.findById(idStruttura);
 
         //Se non viene trovata alcua struttura con l'ID fornito, viene lanciata l'eccezione.
         if (strutturaExists.isEmpty()){
@@ -165,7 +165,7 @@ public class StrutturaService {
         strutturaRepository.save(struttura);
 
 
-        //Ritotno l'oggetto struttura.
+        //Ritorno il DTO che conterrà i dettagli aggiornati della struttura.
         return new StrutturaResponse(
                 struttura.getId(),
                 struttura.getNome(),
@@ -175,32 +175,40 @@ public class StrutturaService {
     }
 
     /**
-     *
-     * @param id Id della struttura da eliminare
+     * Metodo che, dato l'id, viene eliminata la struttura dal database.
+     * @param idStruttura Id della struttura da eliminare
      */
-    public void deleteStrutturaById(Long id){
+    public void deleteStrutturaById(Long idStruttura){
 
         //controllo che l'id parta da 1.
-        if(id < 1) {
+        if(idStruttura < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        Optional<Struttura> struttura = strutturaRepository.findById(id);
+        //Controllo se è presente una struttura con quell'id.
+        Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
         if (struttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
+        //Elimino la struttura trovata dal database.
         strutturaRepository.deleteById(struttura.get().getId());
 
+        //Verifico se la struttura è stata effettivamente eliminata.
         Optional<Struttura> strutturaDeleted = strutturaRepository.findById(struttura.get().getId());
 
+        //Se la struttura è ancora presente dopo la cancellazione, lancio l'eccezione.
         if(strutturaDeleted.isPresent()){
             throw new InternalServerErrorException("Errore nell'eliminazione.");
         }
-
     }
 
+    /**
+     *
+     * @param request
+     */
     public void associaInfermiere(AssociaDissociaInfermiereRequest request){
 
         //controllo che l'id parta da 1.
@@ -208,30 +216,38 @@ public class StrutturaService {
             throw new BadRequestException("Id non corretto.");
         }
 
+        //Controllo se è presente un utente con quell'id.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
 
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
         if (optionalUser.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
 
+        //Controllo se è presente una struttura con quell'id.
         Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
 
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
         if (optionalStruttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
+        //Se l'utente non ha il ruolo di infermiere, lancio l'eccezione.
         if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
             throw new BadRequestException("L'utente non è un infermiere.");
         }
 
-
-
+        //Se esiste l'utente, lo assegno ad una variabile.
         Utente user = optionalUser.get();
+
+        //Se esiste la struttura, la assegno ad una variabile.
         Struttura struttura = optionalStruttura.get();
 
+        //Controllo se l'utente è già associato ad una struttura lancio l'eccezione.
         if(user.getStruttura() != null){
             throw new ConflictException("Utente già associato.");
         }
+
         user.setStruttura(struttura);
 
         userRepository.save(user);

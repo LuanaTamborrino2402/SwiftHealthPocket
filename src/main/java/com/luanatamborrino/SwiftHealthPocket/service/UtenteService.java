@@ -8,6 +8,7 @@ import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorExcept
 import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
+import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,7 @@ public class UtenteService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final Publisher publisher;
     /**
      * Metodo che, dato un id, prende l'utente dal database tramite la repository e lo ritorna al controller.
      * @param userId Id dell'utente.
@@ -300,5 +302,45 @@ public class UtenteService {
         if(optionalUser.get().getStruttura() != null){
             throw new BadRequestException("Infermiere non disponibile.");
         }
+    }
+
+    public void richiestaCambioStruttura(Long userId){
+
+        //controllo che l'id parta da 1.
+        if(userId < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Controllo se è presente un utente con quell'id.
+        Optional<Utente> optionalUser = userRepository.findById(userId);
+
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("Utente non trovato.");
+        }
+
+        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+            throw new BadRequestException("Ruolo non corretto.");
+        }
+
+        Optional<Utente> optionalAdmin = userRepository.findByRuolo(Ruolo.AMMINISTRATORE);
+
+        if (optionalAdmin.isEmpty()){
+            throw new NotFoundException("Amministratore non trovato.");
+        }
+
+        //Controllo se l'utente è già associato ad una struttura lancio l'eccezione.
+        if(optionalUser.get().getStruttura() == null){
+            throw new ConflictException("Utente non ancora associato.");
+        }
+
+        publisher.notify("RichiestaCambioStruttura",
+                optionalUser.get().getNome(),
+                optionalUser.get().getCognome(),
+                "",
+                "",
+                optionalAdmin.get().getEmail());
+
     }
 }
