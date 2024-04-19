@@ -1,5 +1,6 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
+import com.luanatamborrino.SwiftHealthPocket.dto.request.AssociaDissociaInfermiereRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.UpdateUserDataRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.MessageResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.UserResponse;
@@ -156,4 +157,15 @@ public class UserController {
                 .body(new MessageResponse("Richiesta effettuata."));
 
     }
+
+    @PutMapping("/cambioForzatoStruttura")
+    public ResponseEntity<MessageResponse> cambioForzatoStruttura(@RequestBody AssociaDissociaInfermiereRequest request){
+
+        userService.cambioForzatoStruttura(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Cambio forzato avvenuto."));
+    }
+
 }

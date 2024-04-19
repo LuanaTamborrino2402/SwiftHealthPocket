@@ -1,14 +1,17 @@
 package com.luanatamborrino.SwiftHealthPocket.service;
 
+import com.luanatamborrino.SwiftHealthPocket.dto.request.AssociaDissociaInfermiereRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.UpdateUserDataRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.UserResponse;
 import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
 import com.luanatamborrino.SwiftHealthPocket.exception.ConflictException;
 import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorException;
 import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
+import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
+import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +29,7 @@ import java.util.Optional;
 public class UtenteService {
 
     private final UserRepository userRepository;
+    private final StrutturaRepository strutturaRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final Publisher publisher;
@@ -349,5 +353,49 @@ public class UtenteService {
                 "",
                 optionalAdmin.get().getEmail()
         );
+    }
+
+    public void cambioForzatoStruttura(AssociaDissociaInfermiereRequest request){
+
+        //controllo che l'id parta da 1.
+        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'infermiere dal database con l'id fornito.
+        Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
+
+        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("Utente non trovato.");
+        }
+
+        //Prendo la stuttura dal database con l'id fornito.
+        Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
+
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
+        if(optionalStruttura.isEmpty()){
+            throw new NotFoundException("Struttura non trovata.");
+        }
+
+        //Se l'utente non ha il ruolo di infermiere, lancio l'eccezione.
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+            throw new BadRequestException("L'utente non è un infermiere.");
+        }
+
+        //Se esiste l'utente, lo assegno ad una variabile.
+        Utente user = optionalUser.get();
+
+        //Se esiste la struttura, la assegno ad una variabile.
+        Struttura struttura = optionalStruttura.get();
+
+        //Se l'utente non è ancora associato ad una struttura lancio l'eccezione.
+        if(user.getStruttura() == null){
+            throw new ConflictException("Utente non ancora associato ad una struttura.");
+        }
+
+        user.setStruttura(struttura);
+
+        userRepository.save(user);
     }
 }
