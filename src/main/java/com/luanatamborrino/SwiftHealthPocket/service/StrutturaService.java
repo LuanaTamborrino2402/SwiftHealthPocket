@@ -74,10 +74,10 @@ public class StrutturaService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente una struttura con quell'id.
+        //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
-        //Se non viene trovata alcua struttura con l'ID fornito, viene lanciata l'eccezione.
+        //Se non viene trovata alcua struttura con l'id fornito, viene lanciata l'eccezione.
         if(struttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
@@ -135,11 +135,11 @@ public class StrutturaService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente una struttura con quell'id.
+        //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> strutturaExists = strutturaRepository.findById(idStruttura);
 
         //Se non viene trovata alcua struttura con l'ID fornito, viene lanciata l'eccezione.
-        if (strutturaExists.isEmpty()){
+        if(strutturaExists.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
@@ -185,18 +185,18 @@ public class StrutturaService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente una struttura con quell'id.
+        //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
         //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
-        if (struttura.isEmpty()){
+        if(struttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
         //Elimino la struttura trovata dal database.
         strutturaRepository.deleteById(struttura.get().getId());
 
-        //Verifico se la struttura è stata effettivamente eliminata.
+        //Verifico se esiste ancora la struttura con con l'id fornito.
         Optional<Struttura> strutturaDeleted = strutturaRepository.findById(struttura.get().getId());
 
         //Se la struttura è ancora presente dopo la cancellazione, lancio l'eccezione.
@@ -206,8 +206,8 @@ public class StrutturaService {
     }
 
     /**
-     *
-     * @param request
+     * Metodo che associa un infermiere ad una struttura.
+     * @param request DTO con l'id dell'infermiere e della struttura.
      */
     public void associaInfermiere(AssociaDissociaInfermiereRequest request){
 
@@ -216,19 +216,19 @@ public class StrutturaService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'infermiere dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
 
-        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if (optionalUser.isEmpty()){
+        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Controllo se è presente una struttura con quell'id.
+        //Prendo la stuttura dal database con l'id fornito.
         Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
 
         //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
-        if (optionalStruttura.isEmpty()){
+        if(optionalStruttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
@@ -243,61 +243,77 @@ public class StrutturaService {
         //Se esiste la struttura, la assegno ad una variabile.
         Struttura struttura = optionalStruttura.get();
 
-        //Controllo se l'utente è già associato ad una struttura lancio l'eccezione.
+        //Se l'utente è già associato ad una struttura lancio l'eccezione.
         if(user.getStruttura() != null){
             throw new ConflictException("Utente già associato.");
         }
 
+        //Associo l'utente alla struttura.
         user.setStruttura(struttura);
 
+        //Salvo l'utente nel database.
         userRepository.save(user);
-
     }
 
+    /**
+     * Metodo che dissocia un infermiere da una struttura specificata.
+     * @param request DTO con l'id dell'infermiere e della struttura.
+     */
     public void dissociaInfermiere(AssociaDissociaInfermiereRequest request ){
 
-        //controllo che l'id parta da 1.
+        //Controllo che gli id di infermiere e sturttura partano da 1.
         if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
+        //Prendo dal database l'infermiere con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
 
-        if (optionalUser.isEmpty()){
+        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()){
             throw new NotFoundException("Utente non trovato.");
         }
 
+        //Prendo la stuttura dal database con l'id fornito.
         Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
 
-        if (optionalStruttura.isEmpty()){
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
+        if(optionalStruttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
+        //Se l'utente non ha il ruolo di infermiere, lancio l'eccezione.
         if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
             throw new BadRequestException("L'utente non è un infermiere.");
         }
 
-
-
+        //Se esiste l'utente, lo assegno ad una variabile.
         Utente user = optionalUser.get();
+
+        //Se esiste la struttura, la assegno ad una variabile.
         Struttura struttura = optionalStruttura.get();
 
+        // Setto la struttura dell'utente a null, indicando che non è associato più a nessuna struttura.
         user.setStruttura(null);
 
+        //Salvo l'utente nel database.
         userRepository.save(user);
 
-
+        //Prendo l'utente di tipo admin dal database, con il ruolo fornito.
         Optional<Utente> optionalAdmin = userRepository.findByRuolo(Ruolo.AMMINISTRATORE);
 
+        //Se non viene trovato alcun admin con il ruolo fornito, lancio l'eccezione.
         if (optionalAdmin.isEmpty()){
             throw new NotFoundException("Amministratore non trovato.");
         }
+
+        //Notifica dell'infermiere dissociato dalla struttura.
         publisher.notify("InfermiereDissociato",
                 user.getNome(),
                 user.getCognome(),
                 "",
                 "",
-                optionalAdmin.get().getEmail());
-
+                optionalAdmin.get().getEmail()
+        );
     }
 }

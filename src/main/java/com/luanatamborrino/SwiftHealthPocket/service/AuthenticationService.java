@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service per gestire tutti i metodi riguardanti l'autenticazione.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -70,13 +73,21 @@ public class AuthenticationService {
 
         //Controllo se l'utente appena registrato è presente effettivamente nel database.
         Optional<Utente> utenteRegistrato = repository.findByEmail(request.getEmail());
+
+        //Se l'utente registrato non esite, lancio l'eccezione.
         if(utenteRegistrato.isEmpty()){
             throw new InternalServerErrorException("Registrazione fallita.");
         }
     }
 
+    /**
+     * Metodo per l'autenticazione dell'utente. Dopo aver seguito i controlli viene generato un jwt per l'utente che si è autenticato.
+     * @param request DTO con i dati per la login.
+     * @return Response contenente il token di autenticazione jwt.
+     */
     public LoginResponse authenticate(AuthenticationRequest request) {
 
+        //Effettua l'autenticazione dell'utente utilizzando l'authenticationManager.
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -84,20 +95,30 @@ public class AuthenticationService {
                 )
         );
 
+        //Cerco l'utente nel database utilizzando l'email fornita nel DTO di autenticazione.
         Utente utente = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
+        //Restituisce una risposta di login contenente il token jwt generato per l'utente.
         return LoginResponse.builder()
                 .jwt(jwtService.generateToken(utente))
                 .build();
     }
 
+    /**
+     * Metodo aggiunge il token JWT all'header HTTP.
+     * @param jwt Il token JWT da inserire nell'header.
+     * @return L'oggetto HttpHeaders con il token al suo interno.
+     */
     public HttpHeaders putJwtInHttpHeaders(String jwt) {
 
+        //Creo un nuovo oggetto HttpHeaders per impostare l'header HTTP.
         HttpHeaders headers = new HttpHeaders();
 
+        //Aggiungo il token JWT all'header Authorization con lo schema "Bearer".
         headers.add("Authorization", "Bearer: " + jwt);
 
+        //Restituisco gli HttpHeaders contenenti l'header Authorization con il token JWT.
         return headers;
     }
 }

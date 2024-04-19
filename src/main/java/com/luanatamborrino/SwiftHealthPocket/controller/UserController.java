@@ -139,6 +139,11 @@ public class UserController {
 
     }
 
+    /**
+     * Metodo che gestisce una richiesta per il cambio di struttura associata ad un infermiere.
+     * @param id Id dell'infermiere per il quale è richiesta la modifica della struttura.
+     * @return Messaggio di risposta al client.
+     */
     @GetMapping("/richiestaCambioStruttura/{id}")
     public ResponseEntity<MessageResponse> richiestaCambioStruttura(@PathVariable String id){
 

@@ -23,9 +23,9 @@ public class StrutturaController {
     private final StrutturaService strutturaService;
 
     /**
-     * Metodo
-     * @param request
-     * @return
+     * Metodo per creare una struttura.
+     * @param request DTO con i dati per la creazione della struttura.
+     * @return Messaggio di avvenuta creazione.
      */
     @PostMapping("/creaStruttura")
     public ResponseEntity<MessageResponse> creaStruttura (@RequestBody CreaModificaStrutturaRequest request){
@@ -93,7 +93,7 @@ public class StrutturaController {
     /**
      * Metodo per eliminare una struttura dal database tramite l'id.
      * @param id Id della struttura da eliminare.
-     * @return Messaggio di risposta al client.
+     * @return Messaggio di avvenuta eliminazione della struttura.
      */
     @DeleteMapping("/deleteStrutturaById/{id}")
     public ResponseEntity<MessageResponse> deleteStrutturaById(@PathVariable String id){
@@ -108,9 +108,9 @@ public class StrutturaController {
     }
 
     /**
-     *
-     * @param request
-     * @return
+     * Metodo che permetette di associare un infermiere ad una struttura.
+     * @param request DTO con i dati necessari per associare l'infermiere.
+     * @return Messaggio di avvenuta associazione.
      */
     @PutMapping("/associaInfermiere")
     public ResponseEntity<MessageResponse> associaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
@@ -122,6 +122,11 @@ public class StrutturaController {
                 .body(new MessageResponse("Infermiere associato."));
     }
 
+    /**
+     * Metodo che permetette di dissociare un infermiere ad una struttura.
+     * @param request DTO con i dati necessari per dissociare l'infermiere.
+     * @return Messaggio di avvenuta dissociazione.
+     */
     @PutMapping("/dissociaInfermiere")
     public ResponseEntity<MessageResponse> dissociaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
 
@@ -131,5 +136,4 @@ public class StrutturaController {
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Infermiere dissociato."));
     }
-
 }

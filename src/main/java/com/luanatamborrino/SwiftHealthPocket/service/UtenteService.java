@@ -41,7 +41,7 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
@@ -71,7 +71,7 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
@@ -207,7 +207,7 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
@@ -285,7 +285,7 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
@@ -304,6 +304,10 @@ public class UtenteService {
         }
     }
 
+    /**
+     * Metodo per gestire una richiesta di cmabio struttura di un utente.
+     * @param userId Id dell'utente per cui si richiede il cambio struttura.
+     */
     public void richiestaCambioStruttura(Long userId){
 
         //controllo che l'id parta da 1.
@@ -311,7 +315,7 @@ public class UtenteService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Controllo se è presente un utente con quell'id.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
@@ -324,23 +328,26 @@ public class UtenteService {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
+        //Prendo dal database l'utente con il ruolo di amministratore con l'id fornito.
         Optional<Utente> optionalAdmin = userRepository.findByRuolo(Ruolo.AMMINISTRATORE);
 
+        //Se non viene trovato alcun amministratore con l'id fornito, lancio l'eccezione.
         if (optionalAdmin.isEmpty()){
             throw new NotFoundException("Amministratore non trovato.");
         }
 
-        //Controllo se l'utente è già associato ad una struttura lancio l'eccezione.
+        //Controllo se l'utente è già associato ad una struttura, altrimenti lancio l'eccezione.
         if(optionalUser.get().getStruttura() == null){
             throw new ConflictException("Utente non ancora associato.");
         }
 
+        //Notifica della richiesta del cambio di struttura.
         publisher.notify("RichiestaCambioStruttura",
                 optionalUser.get().getNome(),
                 optionalUser.get().getCognome(),
                 "",
                 "",
-                optionalAdmin.get().getEmail());
-
+                optionalAdmin.get().getEmail()
+        );
     }
 }
