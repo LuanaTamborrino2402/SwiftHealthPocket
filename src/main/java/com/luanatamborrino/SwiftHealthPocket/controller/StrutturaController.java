@@ -136,4 +136,16 @@ public class StrutturaController {
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Infermiere dissociato."));
     }
+
+    @GetMapping("/getDisponibilitaStruttura/{id}")
+    public ResponseEntity<MessageResponse> getDisponibilitaStruttura(@PathVariable String id){
+
+        long strutturaId = Long.parseLong(id);
+
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse(strutturaService.getDisponibilitaStruttura(strutturaId)));
+    }
+
 }

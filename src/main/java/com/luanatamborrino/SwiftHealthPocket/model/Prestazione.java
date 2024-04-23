@@ -25,7 +25,7 @@ public class Prestazione {
     @Enumerated(EnumType.STRING)
     private TipoPrestazione tipoPrestazione;
 
-    @Column(name = "esito", nullable = false, columnDefinition = "VARCHAR(20)")
+    @Column(name = "esito", columnDefinition = "VARCHAR(20)")
     @Enumerated(EnumType.STRING)
     private EsitoPrestazione esito;
 

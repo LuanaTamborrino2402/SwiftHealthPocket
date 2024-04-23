@@ -316,4 +316,23 @@ public class StrutturaService {
                 optionalAdmin.get().getEmail()
         );
     }
+
+    public String getDisponibilitaStruttura(Long idStruttura){
+
+        //controllo che l'id parta da 1.
+        if(idStruttura < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo la struttura dal database con l'id fornito.
+        Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
+
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
+        if(struttura.isEmpty()){
+            throw new NotFoundException("Struttura non trovata.");
+        }
+
+        System.out.println(struttura.get().getPrestazioni().size());
+        return String.valueOf( struttura.get().getPrestazioni().size());
+    }
 }
