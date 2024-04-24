@@ -3,6 +3,7 @@ package com.luanatamborrino.SwiftHealthPocket.service;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PrenotaPrestazioneRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
 import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
+import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorException;
 import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Prestazione;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
@@ -113,6 +114,33 @@ public class PrestazioneService {
         }
 
          return response;
+
+    }
+
+    public void eliminaPrenotazione(Long idPrestazione){
+
+        //Controllo che l'id parta da 1.
+        if(idPrestazione < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(prestazione.isEmpty()){
+            throw new NotFoundException("Prestazione non trovata.");
+        }
+
+        if(prestazione.get().getDataInizio().isBefore(LocalDateTime.now().plusHours(2))){
+            throw new BadRequestException("Impossibile eliminare la prestazione.");
+        }
+
+        prestazioneRepository.deleteById(prestazione.get().getIdPrestazione());
+
+        if(prestazioneRepository.existsById(idPrestazione)){
+            throw new InternalServerErrorException("Errore nell'eliminazione.");
+        }
 
     }
 }

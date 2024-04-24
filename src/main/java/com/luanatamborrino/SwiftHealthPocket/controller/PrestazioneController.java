@@ -42,4 +42,16 @@ public class PrestazioneController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    @DeleteMapping("/eliminaPrenotazione/{idPrestazione}")
+    public ResponseEntity<MessageResponse> eliminaPrenotazione(@PathVariable String idPrestazione){
+
+        long id = Long.parseLong(idPrestazione);
+
+        prestazioneService.eliminaPrenotazione(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Prenotazione eliminata."));
+    }
 }
