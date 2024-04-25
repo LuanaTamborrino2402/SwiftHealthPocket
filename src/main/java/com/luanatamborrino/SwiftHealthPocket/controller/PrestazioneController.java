@@ -1,6 +1,7 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PrenotaPrestazioneRequest;
+import com.luanatamborrino.SwiftHealthPocket.dto.request.PresaInCaricoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.MessageResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
@@ -53,5 +54,27 @@ public class PrestazioneController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Prenotazione eliminata."));
+    }
+
+    @GetMapping("/getAllPrenotazioni/{idStruttura}")
+    public ResponseEntity<List<PrestazioneResponse>> getAllPrenotazioni(@PathVariable String idStruttura){
+
+        long id = Long.parseLong(idStruttura);
+
+        List<PrestazioneResponse> response = prestazioneService.getAllPrenotazioni(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @PostMapping("/presaInCarico")
+    public ResponseEntity<MessageResponse> presaInCarico(@RequestBody PresaInCaricoRequest request){
+
+        prestazioneService.presaInCarico(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Prestazione presa in carico."));
     }
 }

@@ -1,6 +1,7 @@
 package com.luanatamborrino.SwiftHealthPocket.service;
 
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PrenotaPrestazioneRequest;
+import com.luanatamborrino.SwiftHealthPocket.dto.request.PresaInCaricoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
 import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
 import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorException;
@@ -141,6 +142,69 @@ public class PrestazioneService {
         if(prestazioneRepository.existsById(idPrestazione)){
             throw new InternalServerErrorException("Errore nell'eliminazione.");
         }
+
+    }
+
+    public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura){
+
+        //Controllo che l'id parta da 1.
+        if(idStruttura < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(struttura.isEmpty()){
+            throw new NotFoundException("Struttura non trovata.");
+        }
+
+        List<Prestazione> prestazioni = prestazioneRepository.findAllByStruttura(struttura.get());
+
+        List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
+
+        for(Prestazione prestazione: prestazioni){
+            //TODO controllo prenotazione libera
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+                prestazioneResponse.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
+        }
+        return prestazioneResponse;
+    }
+
+    public void presaInCarico(PresaInCaricoRequest request){
+
+        //Controllo che l'id parta da 1.
+        if(request.getIdInfermiere() < 1 || request.getIdPrestazione() < 1 ) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Utente> infermiere = userRepository.findById(request.getIdInfermiere());
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(infermiere.isEmpty()){
+            throw new NotFoundException("Infermiere non trovato.");
+        }
+
+        //TODO controlllo del ruolo
+        Optional<Prestazione> prestazione = prestazioneRepository.findById(request.getIdPrestazione());
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(prestazione.isEmpty()){
+            throw new NotFoundException("Prestazione non trovata.");
+        }
+
+        prestazione.get().setInfermiere(infermiere.get());
+
+        prestazioneRepository.save(prestazione.get());
 
     }
 }
