@@ -9,6 +9,7 @@ import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Prestazione;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.TipoPrestazione;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
@@ -71,7 +72,7 @@ public class PrestazioneService {
             throw new BadRequestException("Data nel passato.");
         }
 
-        //TODO ci sarebbe da controllare se la data è fattibile o se tutti gli infermieri sono già occupati,però non lo facciamo e se 48h prima della prestazione, nessun infermiere ha accettato, allora la prenotazione viene annullata
+        //ci sarebbe da controllare se la data è fattibile o se tutti gli infermieri sono già occupati,però non lo facciamo e se 48h prima della prestazione, nessun infermiere ha accettato, allora la prenotazione viene annullata
         Prestazione prestazione = Prestazione.builder()
                 .tipoPrestazione(tipoPrestazione)
                 .dataInizio(request.getDataInizio())
@@ -165,8 +166,7 @@ public class PrestazioneService {
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
         for(Prestazione prestazione: prestazioni){
-            //TODO controllo prenotazione libera
-            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+            if(prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now())){
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -194,7 +194,10 @@ public class PrestazioneService {
             throw new NotFoundException("Infermiere non trovato.");
         }
 
-        //TODO controlllo del ruolo
+        if(!infermiere.get().getRuolo().equals(Ruolo.INFERMIERE)){
+            throw new BadRequestException("Ruolo non valido.");
+        }
+
         Optional<Prestazione> prestazione = prestazioneRepository.findById(request.getIdPrestazione());
 
         //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
