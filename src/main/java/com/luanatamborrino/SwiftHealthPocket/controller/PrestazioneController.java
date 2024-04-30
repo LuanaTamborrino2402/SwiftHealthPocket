@@ -1,9 +1,11 @@
 package com.luanatamborrino.SwiftHealthPocket.controller;
 
+import com.luanatamborrino.SwiftHealthPocket.dto.request.EsitoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PrenotaPrestazioneRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PresaInCaricoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.MessageResponse;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.EsitoPrestazione;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.service.PrestazioneService;
 import lombok.RequiredArgsConstructor;
@@ -76,5 +78,18 @@ public class PrestazioneController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new MessageResponse("Prestazione presa in carico."));
+    }
+
+    @PostMapping("/esito/{idPrestazione}")
+    public ResponseEntity<MessageResponse> esito(@RequestBody EsitoRequest request,@PathVariable String idPrestazione){
+
+        long id = Long.parseLong(idPrestazione);
+
+        prestazioneService.esito(id,request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageResponse("Esito inserito."));
+
     }
 }

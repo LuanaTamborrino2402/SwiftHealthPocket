@@ -39,8 +39,8 @@
     <p>
         Di seguito l'esito della tua prestazione:
     <ul>
-        <li>Tipo prestazione: Tampone</li>
-        <li>Esito: Tampone positivo</li>
+        <li>Tipo prestazione: ${tipoPrestazione}</li>
+        <li>Esito: ${esito}</li>
     </ul>
     </p>
 

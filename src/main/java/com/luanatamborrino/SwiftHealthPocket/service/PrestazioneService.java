@@ -1,5 +1,6 @@
 package com.luanatamborrino.SwiftHealthPocket.service;
 
+import com.luanatamborrino.SwiftHealthPocket.dto.request.EsitoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PrenotaPrestazioneRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.request.PresaInCaricoRequest;
 import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
@@ -9,8 +10,10 @@ import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Prestazione;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.EsitoPrestazione;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.TipoPrestazione;
+import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
@@ -29,7 +32,7 @@ public class PrestazioneService {
     private final PrestazioneRepository prestazioneRepository;
     private final UserRepository userRepository;
     private final StrutturaRepository strutturaRepository;
-
+    private final Publisher publisher;
 
 
     public void prenotaPrestazione(PrenotaPrestazioneRequest request){
@@ -208,6 +211,53 @@ public class PrestazioneService {
         prestazione.get().setInfermiere(infermiere.get());
 
         prestazioneRepository.save(prestazione.get());
+    }
 
+    public void esito(Long idPrestazione, EsitoRequest request){
+
+        if(idPrestazione < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
+
+        if(prestazione.isEmpty()){
+            throw new NotFoundException("Prestazione non trovata.");
+        }
+
+        if(request.getEsito().isBlank() || request.getEsito().isEmpty()){
+            throw new BadRequestException("Inserire l'esito della prestazione.");
+        }
+
+        EsitoPrestazione esitoPrestazione = switch (request.getEsito()) {
+            case "TAMPONE_POSITIVO" -> EsitoPrestazione.TAMPONE_POSITIVO;
+            case "TAMPONE_NEGATIVO" -> EsitoPrestazione.TAMPONE_NEGATIVO;
+            case "VACCINO_EFFETTUATO" -> EsitoPrestazione.VACCINO_EFFETTUATO;
+            default -> throw new BadRequestException("Esito non valido.");
+        };
+
+        if(prestazione.get().getDataFine().isAfter(LocalDateTime.now())){
+            throw new BadRequestException("Data non valida.");
+        }
+
+        prestazione.get().setEsito(esitoPrestazione);
+
+        prestazioneRepository.save(prestazione.get());
+
+
+        publisher.notify("ControlloEsito",
+                "",
+                "",
+                switch (prestazione.get().getTipoPrestazione()) {
+                    case TAMPONE -> "Tampone";
+                    case VACCINO -> "Vaccino";
+                },
+                switch (prestazione.get().getEsito()) {
+                    case TAMPONE_POSITIVO -> "Positivo";
+                    case TAMPONE_NEGATIVO -> "Negativo";
+                    case VACCINO_EFFETTUATO -> "Effettuato";
+                },
+                prestazione.get().getPaziente().getEmail()
+        );
     }
 }
