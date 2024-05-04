@@ -92,4 +92,28 @@ public class PrestazioneController {
                 .body(new MessageResponse("Esito inserito."));
 
     }
+
+    @GetMapping("/getPrenotazioniByPaziente/{idPaziente}")
+    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByPaziente(@PathVariable String idPaziente){
+
+        long id = Long.parseLong(idPaziente);
+
+        List<PrestazioneResponse> response = prestazioneService.getPrenotazioniByPaziente(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/getPrenotazioniByInfermiere/{idInfermiere}")
+    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByInfermiere(@PathVariable String idInfermiere){
+
+        long id = Long.parseLong(idInfermiere);
+
+        List<PrestazioneResponse> response = prestazioneService.getPrenotazioniByInfermiere(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }

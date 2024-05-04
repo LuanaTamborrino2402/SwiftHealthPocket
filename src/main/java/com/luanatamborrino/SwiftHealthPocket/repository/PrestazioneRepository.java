@@ -12,4 +12,8 @@ public interface PrestazioneRepository extends JpaRepository<Prestazione, Long> 
     List<Prestazione> findAllByPaziente(Utente paziente);
 
     List<Prestazione> findAllByStruttura(Struttura struttura);
+
+    List<Prestazione> findAllByInfermiere(Utente infemiere);
+
+
 }

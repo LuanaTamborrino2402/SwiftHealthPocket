@@ -149,6 +149,11 @@ public class PrestazioneService {
 
     }
 
+    /**
+     *
+     * @param idStruttura
+     * @return
+     */
     public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura){
 
         //Controllo che l'id parta da 1.
@@ -260,4 +265,75 @@ public class PrestazioneService {
                 prestazione.get().getPaziente().getEmail()
         );
     }
+
+    public List<PrestazioneResponse> getPrenotazioniByPaziente(Long idPaziente){
+
+
+        //Controllo che l'id parta da 1.
+        if(idPaziente < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Utente> paziente = userRepository.findById(idPaziente);
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(paziente.isEmpty()){
+            throw new NotFoundException("Paziente non trovato.");
+        }
+
+        List<Prestazione> prestazioni = prestazioneRepository.findAllByPaziente(paziente.get());
+
+        List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
+
+        for(Prestazione prestazione: prestazioni){
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+                prestazioneResponse.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
+        }
+        return prestazioneResponse;
+
+    }
+
+    public List<PrestazioneResponse> getPrenotazioniByInfermiere(Long idInfermiere){
+
+
+        //Controllo che l'id parta da 1.
+        if(idInfermiere < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Utente> infermiere = userRepository.findById(idInfermiere);
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(infermiere.isEmpty()){
+            throw new NotFoundException("Infermiere non trovato.");
+        }
+
+        List<Prestazione> prestazioni = prestazioneRepository.findAllByInfermiere(infermiere.get());
+
+        List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
+
+        for(Prestazione prestazione: prestazioni){
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+                prestazioneResponse.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
+        }
+        return prestazioneResponse;
+
+    }
+
 }
