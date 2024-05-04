@@ -116,4 +116,26 @@ public class PrestazioneController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    @GetMapping("/storicoPrestazioni/{idPaziente}")
+    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(@PathVariable String idPaziente){
+
+        long id = Long.parseLong(idPaziente);
+
+        List<PrestazioneResponse> response = prestazioneService.storicoPrestazioniByPaziente(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/storicoPrestazioni")
+    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(){
+
+        List<PrestazioneResponse> response = prestazioneService.storicoPrestazioni();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
 }

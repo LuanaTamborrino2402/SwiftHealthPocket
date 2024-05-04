@@ -336,4 +336,58 @@ public class PrestazioneService {
 
     }
 
+    public List<PrestazioneResponse> storicoPrestazioniByPaziente(Long idPaziente){
+
+        //Controllo che l'id parta da 1.
+        if(idPaziente < 1) {
+            throw new BadRequestException("Id non corretto.");
+        }
+
+        //Prendo l'utente dal database con l'id fornito.
+        Optional<Utente> paziente = userRepository.findById(idPaziente);
+
+        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        if(paziente.isEmpty()){
+            throw new NotFoundException("Paziente non trovato.");
+        }
+
+        List<Prestazione> prestazioni = prestazioneRepository.findAllByPaziente(paziente.get());
+
+        List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
+
+        for(Prestazione prestazione: prestazioni){
+            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito()!= null){
+                prestazioneResponse.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
+        }
+        return prestazioneResponse;
+
+    }
+
+    public List<PrestazioneResponse> storicoPrestazioni(){
+
+        List<Prestazione> prestazioni = prestazioneRepository.findAll();
+
+        List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
+
+        for(Prestazione prestazione: prestazioni){
+            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito()!= null){
+                prestazioneResponse.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
+        }
+        return prestazioneResponse;
+
+    }
 }
