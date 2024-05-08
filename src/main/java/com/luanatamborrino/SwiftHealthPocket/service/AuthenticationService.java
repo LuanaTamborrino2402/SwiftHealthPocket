@@ -37,7 +37,7 @@ public class AuthenticationService {
 
         //Controllo se il ruolo è valido e poi lo assegno.
         Ruolo ruolo;
-        if(request.getRuolo().equals("PAZIENTE")){
+        if(request.getRuolo().equals("PAZIENTE")) {
              ruolo = Ruolo.PAZIENTE;
         }else if (request.getRuolo().equals("INFERMIERE")) {
             ruolo = Ruolo.INFERMIERE;
@@ -47,7 +47,9 @@ public class AuthenticationService {
 
         //Controllo se è già registrato un utente con quella email.
         Optional<Utente> utenteGiaRegistrato = repository.findByEmail(request.getEmail());
-        if(utenteGiaRegistrato.isPresent()){
+
+        //Se esiste, lancio un eccezione.
+        if(utenteGiaRegistrato.isPresent()) {
             throw new ConflictException("Email già registrata.");
         }
 
@@ -55,7 +57,7 @@ public class AuthenticationService {
         if(request.getNome().isEmpty() || request.getNome().isBlank() ||
                 request.getPassword().isEmpty() || request.getPassword().isBlank() ||
                 request.getEmail().isEmpty() || request.getEmail().isBlank() ||
-                request.getCognome().isEmpty() || request.getCognome().isBlank()){
+                request.getCognome().isEmpty() || request.getCognome().isBlank()) {
             throw new BadRequestException("Campo non inserito.");
         }
 
@@ -75,7 +77,7 @@ public class AuthenticationService {
         Optional<Utente> utenteRegistrato = repository.findByEmail(request.getEmail());
 
         //Se l'utente registrato non esite, lancio l'eccezione.
-        if(utenteRegistrato.isEmpty()){
+        if(utenteRegistrato.isEmpty()) {
             throw new InternalServerErrorException("Registrazione fallita.");
         }
     }

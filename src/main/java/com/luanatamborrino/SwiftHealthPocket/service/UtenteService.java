@@ -38,7 +38,7 @@ public class UtenteService {
      * @param userId Id dell'utente.
      * @return DTO con i dati dell'utente.
      */
-    public UserResponse getUserData(Long userId){
+    public UserResponse getUserData(Long userId) {
 
         //Controllo che l'id parta da 1.
         if(userId < 1) {
@@ -49,7 +49,7 @@ public class UtenteService {
         Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(user.isEmpty()){
+        if(user.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
@@ -68,7 +68,7 @@ public class UtenteService {
      * Metodo che, dato l'id, viene eliminato l'utente dal database.
      * @param userId Id dell'utente da eliminare.
      */
-    public void deleteUserById(Long userId){
+    public void deleteUserById(Long userId) {
 
         //controllo che l'id parta da 1.
         if(userId < 1) {
@@ -79,7 +79,7 @@ public class UtenteService {
         Optional<Utente> user = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(user.isEmpty()){
+        if(user.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
@@ -90,7 +90,7 @@ public class UtenteService {
         Optional<Utente> userDeleted = userRepository.findById(user.get().getIdUtente());
 
         //Se l'utente è ancora presente dopo la cancellazione, lancio l'eccezione.
-        if(userDeleted.isPresent()){
+        if(userDeleted.isPresent()) {
             throw new InternalServerErrorException("Errore nell'eliminazione.");
         }
     }
@@ -99,7 +99,7 @@ public class UtenteService {
      * Metodo che, dato l'indirizzo email, l'utente viene eliminato dal database.
      * @param email Email dell'utente da eliminare.
      */
-    public void deleteUserByEmail(String email){
+    public void deleteUserByEmail(String email) {
 
         //Ricerca dell'utente corrispondente all'indirizzo email fornito.
         Optional<Utente> user = userRepository.findByEmail(email);
@@ -116,7 +116,7 @@ public class UtenteService {
         Optional<Utente> userDeleted = userRepository.findByEmail(user.get().getEmail());
 
         //Se l'utente è ancora presente dopo la cancellazione, lancio l'eccezione.
-        if(userDeleted.isPresent()){
+        if(userDeleted.isPresent()) {
             throw new InternalServerErrorException("Errore nell'eliminazione");
         }
     }
@@ -125,13 +125,13 @@ public class UtenteService {
      * Metodo per prendere tutti gli utenti presenti sul database.
      * @return Lista di DTO con i dati di ogni utente.
      */
-    public List<UserResponse> getAllUsers(){
+    public List<UserResponse> getAllUsers() {
 
         //Prendo tutti gli utenti dal database.
         List<Utente> userList = userRepository.findAll();
 
         //Se non vè presente nessun utetne, lancio l'eccezione.
-        if(userList.isEmpty()){
+        if(userList.isEmpty()) {
             throw new NotFoundException("Utenti non trovati.");
         }
 
@@ -139,7 +139,7 @@ public class UtenteService {
         List<UserResponse> response = new ArrayList<>();
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
-        for (Utente user : userList ){
+        for (Utente user : userList ) {
             response.add(new UserResponse(
                     user.getIdUtente(),
                     user.getNome(),
@@ -159,11 +159,11 @@ public class UtenteService {
      * @param ruolo Ruolo dell'utente.
      * @return Lista di DTO con i dati di ogni utente.
      */
-    public List<UserResponse> getAllUsersByRole(String ruolo){
+    public List<UserResponse> getAllUsersByRole(String ruolo) {
 
         //Controllo se il ruolo è valido e poi lo assegno.
         Ruolo ruoloDaCercare;
-        if(ruolo.equals("PAZIENTE")){
+        if(ruolo.equals("PAZIENTE")) {
             ruoloDaCercare = Ruolo.PAZIENTE;
         }else if (ruolo.equals("INFERMIERE")) {
             ruoloDaCercare = Ruolo.INFERMIERE;
@@ -175,15 +175,15 @@ public class UtenteService {
         List<Utente> userList = userRepository.findAllByRuolo(ruoloDaCercare);
 
         //Se non ci sono utenti nel database con il ruolo specificato, lancio l'eccezione.
-        if(userList.isEmpty()){
+        if(userList.isEmpty()) {
             throw new NotFoundException("Utenti non trovati.");
         }
 
-        //Creo la lists di utenti.
+        //Creo la lista di utenti.
         List<UserResponse> response = new ArrayList<>();
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
-        for(Utente user : userList ){
+        for(Utente user : userList ) {
             response.add(new UserResponse(
                     user.getIdUtente(),
                     user.getNome(),
@@ -194,7 +194,7 @@ public class UtenteService {
             ));
         }
 
-        //Restituisco IL DTO.
+        //Restituisco il DTO.
         return response;
     }
 
@@ -204,7 +204,7 @@ public class UtenteService {
      * @param request DTO con i nuovi dati.
      * @return DTO con tutti i dati dell'utente modificati.
      */
-    public UserResponse updateUserData(Long userId, UpdateUserDataRequest request){
+    public UserResponse updateUserData(Long userId, UpdateUserDataRequest request) {
 
         //controllo che l'id parta da 1.
         if(userId < 1) {
@@ -215,7 +215,7 @@ public class UtenteService {
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(optionalUser.isEmpty()){
+        if(optionalUser.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
@@ -223,25 +223,25 @@ public class UtenteService {
         Utente user = optionalUser.get();
 
         //Controllo se il campo del nome non è vuoto e non contiene solo spazi bianchi, aggiorno il nome dell'utente.
-        if(!request.getNome().isBlank() && !request.getNome().isEmpty()){
+        if(!request.getNome().isBlank() && !request.getNome().isEmpty()) {
             user.setNome(request.getNome());
         }
 
         //Controllo se il campo del cognome non è vuoto e non contiene solo spazi bianchi, aggiorno il cognome dell'utente.
-        if(!request.getCognome().isBlank() && !request.getCognome().isEmpty()){
+        if(!request.getCognome().isBlank() && !request.getCognome().isEmpty()) {
             user.setCognome(request.getCognome());
         }
 
         //Controllo se il campo dell'indirizzo email non è vuoto, non contiene solo spazi bianchi e non coincide con quello attuale.
         if(!request.getEmail().isBlank() &&
                 !request.getEmail().isEmpty() &&
-                !request.getEmail().equals(user.getEmail())){
+                !request.getEmail().equals(user.getEmail())) {
 
             //Controllo se esiste già un utente con il nuovo indirizzo email.
             Optional<Utente> userWithEmail = userRepository.findByEmail(request.getEmail());
 
             //Se esiste, lancio l'eccezione.
-            if(userWithEmail.isPresent()){
+            if(userWithEmail.isPresent()) {
                 throw new ConflictException("Utente già presente con quell'email.");
             }else{
                 //Se non esiste, assegno all'utente il nuovo indirizzo email.
@@ -256,7 +256,7 @@ public class UtenteService {
                 !request.getNuovaPassword().isEmpty()){
 
             //Controllo se utente inserisce correttamente la sua vecchia password, se non è corretta lancio l'eccezione.
-            if(!passwordEncoder.matches(request.getVecchiaPassword(), user.getPassword())){
+            if(!passwordEncoder.matches(request.getVecchiaPassword(), user.getPassword())) {
                 throw new BadRequestException("Password non corretta.");
             }
 
@@ -279,10 +279,10 @@ public class UtenteService {
     }
 
     /**
-     * Metodo cerca la disponibilità di un infermiere identificato dall'id utente.
-     * @param userId Id dell'utente infermiere da cercare.
+     * Metodo cerca la disponibilità di un infermiere identificato dal suo id.
+     * @param userId Id dell'infermiere da cercare.
      */
-    public void getDisponibilitaInfermiere(Long userId){
+    public void getDisponibilitaInfermiere(Long userId) {
 
         //controllo che l'id parta da 1.
         if(userId < 1) {
@@ -293,26 +293,26 @@ public class UtenteService {
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(optionalUser.isEmpty()){
+        if(optionalUser.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
         //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
-        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
         //Controllo se l'infermiere ha una struttura assegnata, lancio l'eccezione.
-        if(optionalUser.get().getStruttura() != null){
+        if(optionalUser.get().getStruttura() != null) {
             throw new BadRequestException("Infermiere non disponibile.");
         }
     }
 
     /**
-     * Metodo per gestire una richiesta di cmabio struttura di un utente.
+     * Metodo per gestire una richiesta di cambio struttura di un infermiere.
      * @param userId Id dell'utente per cui si richiede il cambio struttura.
      */
-    public void richiestaCambioStruttura(Long userId){
+    public void richiestaCambioStruttura(Long userId) {
 
         //controllo che l'id parta da 1.
         if(userId < 1) {
@@ -323,12 +323,12 @@ public class UtenteService {
         Optional<Utente> optionalUser = userRepository.findById(userId);
 
         //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(optionalUser.isEmpty()){
+        if(optionalUser.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
         //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
-        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
@@ -336,7 +336,7 @@ public class UtenteService {
         Optional<Utente> optionalAdmin = userRepository.findByRuolo(Ruolo.AMMINISTRATORE);
 
         //Se non viene trovato alcun amministratore con l'id fornito, lancio l'eccezione.
-        if (optionalAdmin.isEmpty()){
+        if (optionalAdmin.isEmpty()) {
             throw new NotFoundException("Amministratore non trovato.");
         }
 
@@ -355,31 +355,35 @@ public class UtenteService {
         );
     }
 
-    public void cambioForzatoStruttura(AssociaDissociaInfermiereRequest request){
+    /**
+     * Metodo che modifica la struttura associata a un infermiere nel sistema
+     * @param request DTO con l'id dell'infermiere e della nuova struttura a cui deve essere associato.
+     */
+    public void cambioForzatoStruttura(AssociaDissociaInfermiereRequest request) {
 
-        //controllo che l'id parta da 1.
+        //controllo che l'id dell'infermiere e della struttura partano da 1.
         if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'infermiere dal database con l'id fornito.
+        //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
 
-        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
-        if(optionalUser.isEmpty()){
+        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
+        if(optionalUser.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Prendo la stuttura dal database con l'id fornito.
+        //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
 
-        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
-        if(optionalStruttura.isEmpty()){
+        //Se non viene trovato alcuna struttura con l'id fornito, lancio l'eccezione.
+        if(optionalStruttura.isEmpty()) {
             throw new NotFoundException("Struttura non trovata.");
         }
 
-        //Se l'utente non ha il ruolo di infermiere, lancio l'eccezione.
-        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)){
+        //Verifico che l'utente sia un infermiere.
+        if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("L'utente non è un infermiere.");
         }
 
@@ -389,13 +393,15 @@ public class UtenteService {
         //Se esiste la struttura, la assegno ad una variabile.
         Struttura struttura = optionalStruttura.get();
 
-        //Se l'utente non è ancora associato ad una struttura lancio l'eccezione.
-        if(user.getStruttura() == null){
+        //Verifico che l'utente sia già associato a una struttura, altrimenti lancio l'eccezione.
+        if(user.getStruttura() == null) {
             throw new ConflictException("Utente non ancora associato ad una struttura.");
         }
 
+        //Associo la nuova struttura all'utente.
         user.setStruttura(struttura);
 
+        //Salvo le modifiche apportate.
         userRepository.save(user);
     }
 }

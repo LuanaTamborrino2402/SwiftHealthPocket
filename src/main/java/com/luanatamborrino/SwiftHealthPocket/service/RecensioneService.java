@@ -19,62 +19,71 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service per gestire tutti i metodi riguardanti la struttura.
+ */
 @Service
 @RequiredArgsConstructor
 public class RecensioneService {
 
     private final RecensioneRepository recensioneRepository;
-
     private final PrestazioneRepository prestazioneRepository;
-
     private final UserRepository userRepository;
 
-    public void salva(Long idPrestazione, RecensioneRequest request){
+    /**
+     * Metodo per salvare una nuova recensione per una prestazione.
+     * @param idPrestazione Id della prestazione da recensire.
+     * @param request DTO con i dati della recensione.
+     */
+    public void salva(Long idPrestazione, RecensioneRequest request) {
 
-        //controllo che l'id parta da 1.
+        //Controllo che l'id della prestazione parta da 1.
         if(idPrestazione < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo dal database la prestazione con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
 
-        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(prestazione.isEmpty()){
+        //Se non viene trovata alcuna prestazione con l'id fornito, lancio l'eccezione.
+        if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
-
-        //controllo che l'id parta da 1.
+        //Controllo che l'id del paziente parta da 1.
         if(request.getIdPaziente() < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo dal database il paziente con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(request.getIdPaziente());
 
-        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(paziente.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, lancio l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Paziente non trovato.");
         }
 
-        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
-        if(!paziente.get().getRuolo().equals(Ruolo.PAZIENTE)){
+        //Se l'utente non ha il ruolo di paziente, lancio l'eccezione.
+        if(!paziente.get().getRuolo().equals(Ruolo.PAZIENTE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
-        if(request.getCommento().isEmpty() || request.getCommento().isBlank() || request.getCommento().length()>1000){
+        //Verifico che il commento non sia vuoto, non contenga solo spazi bianchi e non superi i 1000 caratteri.
+        if(request.getCommento().isEmpty() || request.getCommento().isBlank() || request.getCommento().length() > 1000) {
             throw new BadRequestException("Commento non valido.");
         }
 
-        if(request.getValutazione() < 1 || request.getValutazione() >5){
+        //Verifico che la valutazione sia compresa tra 1 e 5.
+        if(request.getValutazione() < 1 || request.getValutazione() > 5) {
             throw new BadRequestException("Valutazione non valida.");
         }
 
-        if(prestazione.get().getEsito() == null){
+        //Verifico che la prestazione abbia un esito registrato.
+        if(prestazione.get().getEsito() == null) {
             throw new BadRequestException("Esito non presente.");
         }
 
+        //Creo l'oggetto Recensione e lo salvo nel database.
         Recensione recensione = Recensione.builder()
                 .valutazione(request.getValutazione())
                 .commento(request.getCommento())
@@ -86,32 +95,39 @@ public class RecensioneService {
         recensioneRepository.save(recensione);
     }
 
-    public List<RecensioneResponse> getAllByPaziente (Long idPaziente){
+    /**
+     * Recupera tutte le recensioni fatte da un paziente specifico.
+     * @param idPaziente Id del paziente di cui recupereare le recensioni.
+     * @return Lista di DTO che rappresentano le recensioni fatte dal paziente.
+     */
+    public List<RecensioneResponse> getAllByPaziente (Long idPaziente) {
 
-        //controllo che l'id parta da 1.
+        //Controllo che l'id parta da 1.
         if(idPaziente < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo dal database il paziente con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
 
-        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(paziente.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, lancio l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Paziente non trovato.");
         }
 
-        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
-        if(!paziente.get().getRuolo().equals(Ruolo.PAZIENTE)){
+        //Se l'utente non ha il ruolo di paziente, lancio l'eccezione.
+        if(!paziente.get().getRuolo().equals(Ruolo.PAZIENTE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
+        //Recupero tutte le recensioni associate al paziente.
         List<Recensione> recensioni = recensioneRepository.findAllByPaziente(paziente.get());
 
+        //Creo la lista di recensioni.
         List<RecensioneResponse> response = new ArrayList<>();
 
-        for(Recensione recensione: recensioni){
-
+        //Per ogni recensione, creo un nuovo oggetto RecensioneResponse con i dati della recensione.
+        for(Recensione recensione: recensioni) {
             response.add(new RecensioneResponse(
                     recensione.getCommento(),
                     recensione.getValutazione(),
@@ -121,28 +137,34 @@ public class RecensioneService {
             ));
         }
 
+        //Restituisco il DTO.
         return response;
     }
 
-    public RecensioneResponse getByPrestazioneId (Long idPrestazione){
+    /**
+     * Metodo per recuperare la recensione associata a una specifica prestazione.
+     * @param idPrestazione Id della prestazione di cui recuperare la recensione.
+     * @return DTO con i dati della recensione.
+     */
+    public RecensioneResponse getByPrestazioneId (Long idPrestazione) {
 
-        //controllo che l'id parta da 1.
+        //Controllo che l'id parta da 1.
         if(idPrestazione < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo dal database la prestazione con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
 
-        //Se non viene trovato alcun utente con l'id fornito, lancio l'eccezione.
-        if(prestazione.isEmpty()){
+        //Se non viene trovata alcuna prestazione con l'id fornito, lancio l'eccezione.
+        if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
-
+        //Prendo dal database la recensione associata alla prestazione.
         Recensione recensione = recensioneRepository.findByPrestazione(prestazione.get());
 
-
+        //Ritorno il DTO che conterrà i dati della recensione.
         return new RecensioneResponse(
                 recensione.getCommento(),
                 recensione.getValutazione(),
