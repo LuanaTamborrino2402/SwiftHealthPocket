@@ -33,6 +33,7 @@ public class UtenteService {
     private final PasswordEncoder passwordEncoder;
 
     private final Publisher publisher;
+
     /**
      * Metodo che, dato un id, prende l'utente dal database tramite la repository e lo ritorna al controller.
      * @param userId Id dell'utente.
@@ -53,7 +54,7 @@ public class UtenteService {
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Ritorno il DTO con i dati dell'utente richiesto.
+        //Restituisco il DTO con i dati dell'utente richiesto.
         return new UserResponse(
                 user.get().getIdUtente(),
                 user.get().getNome(),
@@ -101,11 +102,11 @@ public class UtenteService {
      */
     public void deleteUserByEmail(String email) {
 
-        //Ricerca dell'utente corrispondente all'indirizzo email fornito.
+        //Ricerco l'utente corrispondente all'indirizzo email fornito.
         Optional<Utente> user = userRepository.findByEmail(email);
 
         //Se non viene trovato alcun utente con l'indirizzo email fornito, lancio l'eccezione.
-        if(user.isEmpty()){
+        if(user.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
@@ -123,7 +124,7 @@ public class UtenteService {
 
     /**
      * Metodo per prendere tutti gli utenti presenti sul database.
-     * @return Lista di DTO con i dati di ogni utente.
+     * @return Lista di DTO contenente i dati di ogni utente.
      */
     public List<UserResponse> getAllUsers() {
 
@@ -139,7 +140,7 @@ public class UtenteService {
         List<UserResponse> response = new ArrayList<>();
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
-        for (Utente user : userList ) {
+        for (Utente user: userList) {
             response.add(new UserResponse(
                     user.getIdUtente(),
                     user.getNome(),
@@ -157,7 +158,7 @@ public class UtenteService {
     /**
      * Metodo che restituisce la lista degli utenti in base al ruolo.
      * @param ruolo Ruolo dell'utente.
-     * @return Lista di DTO con i dati di ogni utente.
+     * @return Lista di DTO contenente i dati di ogni utente.
      */
     public List<UserResponse> getAllUsersByRole(String ruolo) {
 
@@ -183,7 +184,7 @@ public class UtenteService {
         List<UserResponse> response = new ArrayList<>();
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
-        for(Utente user : userList ) {
+        for(Utente user: userList) {
             response.add(new UserResponse(
                     user.getIdUtente(),
                     user.getNome(),
@@ -253,9 +254,9 @@ public class UtenteService {
         if(!request.getVecchiaPassword().isBlank() &&
                 !request.getVecchiaPassword().isEmpty() &&
                 !request.getNuovaPassword().isBlank() &&
-                !request.getNuovaPassword().isEmpty()){
+                !request.getNuovaPassword().isEmpty()) {
 
-            //Controllo se utente inserisce correttamente la sua vecchia password, se non è corretta lancio l'eccezione.
+            //Controllo se l'utente inserisce correttamente la sua vecchia password, se non è corretta lancio l'eccezione.
             if(!passwordEncoder.matches(request.getVecchiaPassword(), user.getPassword())) {
                 throw new BadRequestException("Password non corretta.");
             }
@@ -267,7 +268,7 @@ public class UtenteService {
         //Salvo le modifiche apportate.
         userRepository.save(user);
 
-        //Ritorno il DTO che conterrà i dettagli aggiornati dell'utente.
+        //Restituisco il DTO che conterrà i dettagli aggiornati dell'utente.
         return new UserResponse(
                 user.getIdUtente(),
                 user.getNome(),
@@ -297,12 +298,12 @@ public class UtenteService {
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
+        //Se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
         if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
-        //Controllo se l'infermiere ha una struttura assegnata, lancio l'eccezione.
+        //Se l'infermiere ha una struttura assegnata, lancio l'eccezione.
         if(optionalUser.get().getStruttura() != null) {
             throw new BadRequestException("Infermiere non disponibile.");
         }
@@ -327,7 +328,7 @@ public class UtenteService {
             throw new NotFoundException("Utente non trovato.");
         }
 
-        //Controllo se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
+        //Se l'utente trovato non ha il ruolo di infermiere, lancio l'eccezione.
         if(!optionalUser.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("Ruolo non corretto.");
         }
@@ -340,12 +341,12 @@ public class UtenteService {
             throw new NotFoundException("Amministratore non trovato.");
         }
 
-        //Controllo se l'utente è già associato ad una struttura, altrimenti lancio l'eccezione.
-        if(optionalUser.get().getStruttura() == null){
+        //Verifico che l'utente sia già associato a una struttura, altrimenti lancio l'eccezione.
+        if(optionalUser.get().getStruttura() == null) {
             throw new ConflictException("Utente non ancora associato.");
         }
 
-        //Notifica della richiesta del cambio di struttura.
+        //Notifico via email l'evento "RichiestaCambioStruttura" all'amministratore, includendo nome e cognome dell'infermiere.
         publisher.notify("RichiestaCambioStruttura",
                 optionalUser.get().getNome(),
                 optionalUser.get().getCognome(),

@@ -10,7 +10,10 @@ import java.util.Map;
 public class SendEmailRequest {
 
     private String emailDestinatario;
+
     private String oggetto;
+
     private Map<String, String> datiDinamici;
+
     private String eventType;
 }

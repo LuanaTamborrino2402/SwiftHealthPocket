@@ -20,8 +20,18 @@ public interface UserRepository extends JpaRepository<Utente,Long> {
      */
     Optional<Utente> findByEmail(String email);
 
+    /**
+     * Cerca tutti gli utenti nel database basati sul ruolo fornito come parametro.
+     * @param ruolo Ruolo dell'utente.
+     * @return Lista di utenti con quel ruolo.
+     */
     List<Utente> findAllByRuolo(Ruolo ruolo);
 
+    /**
+     * Cerca un'utente nel database basato sul ruolo fornito come parametro.
+     * @param ruolo Ruolo dell'utente.
+     * @return L'utente con quel ruolo.
+     */
     Optional<Utente> findByRuolo(Ruolo ruolo);
 
 }

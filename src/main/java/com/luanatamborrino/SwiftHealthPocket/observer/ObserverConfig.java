@@ -27,7 +27,7 @@ public class ObserverConfig {
      * Metodo che inizializza l'Observer facendo le subscirbe per ogni implementazione del listener.
      */
     @Bean
-    public void start(){
+    public void start() {
 
         publisher.subscribe("InfermiereDissociato", infermiereDissociato);
         publisher.subscribe("ControlloEsito", controlloEsito);
@@ -38,7 +38,7 @@ public class ObserverConfig {
      * L'annotazione @PreDestroy assicura che questo metodo venga invocato prima della chiusura dell'applicazioneper effettuare tutti gli unsubscribe.
      */
     @PreDestroy
-    public void stop(){
+    public void stop() {
 
         publisher.unsubscribe("InfermiereDissociato");
         publisher.unsubscribe("ControlloEsito");

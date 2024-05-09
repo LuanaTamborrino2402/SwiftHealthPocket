@@ -30,7 +30,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     /**
-     * Metodo per registrare un utente nel database.
+     * Metodo per registrare un utente sul database.
      * @param request DTO con i dati della registrazione.
      */
     public void register(RegisterRequest request) {
@@ -45,7 +45,7 @@ public class AuthenticationService {
             throw new BadRequestException("Ruolo non valido.");
         }
 
-        //Controllo se è già registrato un utente con quella email.
+        //Controllo se è già registrato un utente con quell'indirizzo email.
         Optional<Utente> utenteGiaRegistrato = repository.findByEmail(request.getEmail());
 
         //Se esiste, lancio un eccezione.
@@ -61,7 +61,7 @@ public class AuthenticationService {
             throw new BadRequestException("Campo non inserito.");
         }
 
-        //Creo un utente.
+        //Costruisco l'oggetto utente con il pattern builder
         Utente utente = Utente.builder()
                 .nome(request.getNome())
                 .cognome(request.getCognome())
@@ -89,7 +89,7 @@ public class AuthenticationService {
      */
     public LoginResponse authenticate(AuthenticationRequest request) {
 
-        //Effettua l'autenticazione dell'utente utilizzando l'authenticationManager.
+        //Effettuo l'autenticazione dell'utente utilizzando l'authenticationManager.
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -97,14 +97,15 @@ public class AuthenticationService {
                 )
         );
 
-        //Cerco l'utente nel database utilizzando l'email fornita nel DTO di autenticazione.
+        //Cerco l'utente nel database utilizzando l'indirizzo email fornito nel DTO di autenticazione.
         Utente utente = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        //Restituisce una risposta di login contenente il token jwt generato per l'utente.
-        return LoginResponse.builder()
-                .jwt(jwtService.generateToken(utente))
-                .build();
+        //Restituisco una risposta di login contenente il token jwt generato per l'utente.
+        return new LoginResponse(
+                "Benvenuto " + utente.getNome() + " " + utente.getCognome() + "! Il tuo accesso è stato verificato con successo e sei ora connesso al sistema.",
+                jwtService.generateToken(utente)
+        );
     }
 
     /**

@@ -33,7 +33,7 @@ public class RecensioneService {
     /**
      * Metodo per salvare una nuova recensione per una prestazione.
      * @param idPrestazione Id della prestazione da recensire.
-     * @param request DTO con i dati della recensione.
+     * @param request DTO contenente i dati della recensione.
      */
     public void salva(Long idPrestazione, RecensioneRequest request) {
 
@@ -83,7 +83,7 @@ public class RecensioneService {
             throw new BadRequestException("Esito non presente.");
         }
 
-        //Creo l'oggetto Recensione e lo salvo nel database.
+        //Creo l'oggetto Recensione con il pattern builder e lo salvo nel database.
         Recensione recensione = Recensione.builder()
                 .valutazione(request.getValutazione())
                 .commento(request.getCommento())
@@ -92,11 +92,12 @@ public class RecensioneService {
                 .prestazione(prestazione.get())
                 .build();
 
+        //Salvo la recensione nel database.
         recensioneRepository.save(recensione);
     }
 
     /**
-     * Recupera tutte le recensioni fatte da un paziente specifico.
+     * Metodo che recupera tutte le recensioni fatte da un paziente specifico.
      * @param idPaziente Id del paziente di cui recupereare le recensioni.
      * @return Lista di DTO che rappresentano le recensioni fatte dal paziente.
      */

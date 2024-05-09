@@ -14,5 +14,4 @@ public class AssociaDissociaInfermiereRequest {
     private Long idInfermiere;
 
     private Long idStruttura;
-
 }

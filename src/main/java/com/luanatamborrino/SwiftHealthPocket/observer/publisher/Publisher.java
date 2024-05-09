@@ -20,7 +20,7 @@ public class Publisher {
      * @param eventType Tipo dell'evento usato come chiave della mappa.
      * @param subscriber Implementazione dell'interfaccia del subscriber.
      */
-    public void subscribe(String eventType, Subscriber subscriber){
+    public void subscribe(String eventType, Subscriber subscriber) {
 
         listeners.put(eventType, subscriber);
     }
@@ -29,7 +29,7 @@ public class Publisher {
      * Metodo per annullare l'iscrizione di un listener al publisher.
      * @param eventType Tipo dell'evento utilizzato per chiave della mappa.
      */
-    public void unsubscribe(String eventType){
+    public void unsubscribe(String eventType) {
 
         listeners.remove(eventType);
     }
@@ -43,7 +43,7 @@ public class Publisher {
      * @param esito Esito inerente al tipo di prestazione effettuata.
      * @param emailDestinatario Email del destinatario a cui arriva la notifica.
      */
-    public void notify(String eventType, String nome, String cognome, String tipoPrestazione, String esito, String emailDestinatario){
+    public void notify(String eventType, String nome, String cognome, String tipoPrestazione, String esito, String emailDestinatario) {
 
         listeners.get(eventType).update(nome, cognome, tipoPrestazione, esito, emailDestinatario);
     }

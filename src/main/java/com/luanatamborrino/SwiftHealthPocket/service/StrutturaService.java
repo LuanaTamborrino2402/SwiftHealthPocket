@@ -41,16 +41,16 @@ public class StrutturaService {
         //Controllo se almeno un campo è vuoto.
         if(request.getNome().isEmpty() || request.getNome().isBlank() ||
                 request.getCap() == null ||
-                request.getIndirizzo().isEmpty() || request.getIndirizzo().isBlank()){
+                request.getIndirizzo().isEmpty() || request.getIndirizzo().isBlank()) {
             throw new BadRequestException("Campo non inserito.");
         }
 
-        //Controllo se il valore del campo "Cap" non è esattamente di 5 caratteri e lancio un'eccezione in caso contrario.
+        //Controllo se il valore del campo "Cap" sia esattamente di 5 cifre, altrimenti lancio l'eccezione.
         if(String.valueOf(request.getCap()).length() != 5 ) {
             throw new BadRequestException("Cap non valido.");
         }
 
-        //Creo una struttura.
+        //Creo una struttura con il pattern builder.
         Struttura struttura = Struttura.builder()
                 .nome(request.getNome())
                 .cap(request.getCap())
@@ -78,7 +78,7 @@ public class StrutturaService {
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
         //Se non viene trovata alcua struttura con l'id fornito, viene lanciata l'eccezione.
-        if(struttura.isEmpty()){
+        if(struttura.isEmpty()) {
             throw new NotFoundException("Struttura non trovata.");
         }
 
@@ -92,16 +92,16 @@ public class StrutturaService {
     }
 
     /**
-     * Metodo per prenere tutte le strutture presenti sul databse.
-     * @return Lista di DTO con i dati di ogni struttura.
+     * Metodo per prendere tutte le strutture presenti sul databse.
+     * @return Lista di DTO contenente i dati di ogni struttura.
      */
     public List<StrutturaResponse> getAllStrutture() {
 
         //Prendo tutte le strutture dal database.
         List<Struttura> strutture = strutturaRepository.findAll();
 
-        //Se non viene trovata alcua struttura con l'ID fornito, viene lanciata l'eccezione.
-        if(strutture.isEmpty()){
+        //Se non viene trovata alcua struttura con l'id fornito, viene lanciata l'eccezione.
+        if(strutture.isEmpty()) {
             throw new NotFoundException("Strutture non trovate.");
         }
 
@@ -109,7 +109,7 @@ public class StrutturaService {
         List<StrutturaResponse> response = new ArrayList<>();
 
         //Per ogni struttura trovata, creo un oggetto StrutturaResponse e lo aggiungo alla lista.
-        for (Struttura struttura : strutture ){
+        for (Struttura struttura: strutture) {
             response.add(new StrutturaResponse(
                     struttura.getId(),
                     struttura.getNome(),
@@ -126,9 +126,9 @@ public class StrutturaService {
      * Metodo utilizzato per modificare i dati di una struttura.
      * @param idStruttura Id della struttura da modificare.
      * @param request DTO con i nuovi dati.
-     * @return DTO con i dati della struttura modificata.
+     * @return DTO contenente i dati della struttura modificata.
      */
-    public StrutturaResponse updateStruttura(Long idStruttura, CreaModificaStrutturaRequest request ) {
+    public StrutturaResponse updateStruttura(Long idStruttura, CreaModificaStrutturaRequest request) {
 
         //Controllo che l'id parta da 1.
         if(idStruttura < 1) {
@@ -146,17 +146,17 @@ public class StrutturaService {
         //Se esiste la struttura, la assegno ad una variabile.
         Struttura struttura = strutturaExists.get();
 
-        //Controllo se il campo del nome non è vuoto e non contiene solo spazi bianchi, aggiorno il nome della struttura.
+        //Verifico che il campo del nome sia vuoto e non contenga solo spazi bianchi. Se il nome è valido, aggiorno il nome della struttura.
         if(!request.getNome().isBlank() && !request.getNome().isEmpty()) {
             struttura.setNome(request.getNome());
         }
 
-        //Controllo se il campo dell'indirizzo non è vuoto e non contiene solo spazi bianchi, aggiorno l'indirizzo della struttura.
+        //Verifico che il campo dell'indirizzo non sia vuoto e non contenga solo spazi bianchi. Se è valido, aggiorno l'indirizzo della struttura.
         if(!request.getIndirizzo().isBlank() && !request.getIndirizzo().isEmpty()) {
             struttura.setIndirizzo(request.getIndirizzo());
         }
 
-        //Controllo se il campo del cap non è nullo e se la lunghezza della stringa è uguale a 5, aggiorno il cap della struttura.
+        //Verifico che il campo del cap non sia nullo e che la lunghezza della stringa sia uguale a 5. Se è valido, aggiorno il cap della struttura.
         if(request.getCap() != null && String.valueOf(request.getCap()).length() == 5 ) {
             struttura.setCap(request.getCap());
         }
@@ -165,7 +165,7 @@ public class StrutturaService {
         strutturaRepository.save(struttura);
 
 
-        //Ritorno il DTO che conterrà i dettagli aggiornati della struttura.
+        //Restituisco il DTO che conterrà i dettagli aggiornati della struttura.
         return new StrutturaResponse(
                 struttura.getId(),
                 struttura.getNome(),
@@ -212,7 +212,7 @@ public class StrutturaService {
     public void associaInfermiere(AssociaDissociaInfermiereRequest request) {
 
         //controllo che l'id dell'infermiere e della struttura partano da 1.
-        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
+        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1 ) {
             throw new BadRequestException("Id non corretto.");
         }
 
@@ -307,7 +307,7 @@ public class StrutturaService {
             throw new NotFoundException("Amministratore non trovato.");
         }
 
-        //Notifica dell'infermiere dissociato dalla struttura.
+        //Notifico via email l'evento "InfermiereDissociato" all'amministratore, includendo nome e cognome dell'infermiere.
         publisher.notify("InfermiereDissociato",
                 user.getNome(),
                 user.getCognome(),

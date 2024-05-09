@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *  Service per gestire tutti i metodi riguardanti la prestazione.
+ */
 @Service
 @RequiredArgsConstructor
 public class PrestazioneService {
@@ -32,21 +35,25 @@ public class PrestazioneService {
     private final PrestazioneRepository prestazioneRepository;
     private final UserRepository userRepository;
     private final StrutturaRepository strutturaRepository;
+
     private final Publisher publisher;
 
+    /**
+     * Metodo per prenotare una prestazione sanitaria.
+     * @param request DTO con i dati necessari per la prenotazione.
+     */
+    public void prenotaPrestazione(PrenotaPrestazioneRequest request) {
 
-    public void prenotaPrestazione(PrenotaPrestazioneRequest request){
-
-        //Controllo che gli id di infermiere e sturttura partano da 1.
+        //Controllo che gli id di infermiere e struttura partano da 1.
         if(request.getIdPaziente() < 1 || request.getIdStruttura() < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo dal database l'infermiere con l'id fornito.
-        Optional<Utente> optionalUser = userRepository.findById(request.getIdPaziente());
+        //Prendo dal database il paziente con l'id fornito.
+        Optional<Utente> paziente = userRepository.findById(request.getIdPaziente());
 
-        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
-        if(optionalUser.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, lancio l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
@@ -54,61 +61,77 @@ public class PrestazioneService {
         Optional<Struttura> optionalStruttura = strutturaRepository.findById(request.getIdStruttura());
 
         //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
-        if(optionalStruttura.isEmpty()){
+        if(optionalStruttura.isEmpty()) {
             throw new NotFoundException("Struttura non trovata.");
         }
 
-        if(request.getTipoPrestazione().isBlank() && request.getTipoPrestazione().isEmpty()){
+        if(request.getTipoPrestazione().isBlank() && request.getTipoPrestazione().isEmpty()) {
             throw new BadRequestException("Inserire il tipo di prestazione.");
         }
 
+        //Controllo se il tipo di prestazione è valido e poi lo assegno.
         TipoPrestazione tipoPrestazione;
-        if(request.getTipoPrestazione().equals("TAMPONE")){
+        if(request.getTipoPrestazione().equals("TAMPONE")) {
             tipoPrestazione = TipoPrestazione.TAMPONE;
-        }else if(request.getTipoPrestazione().equals("VACCINO")){
+        }else if(request.getTipoPrestazione().equals("VACCINO")) {
             tipoPrestazione = TipoPrestazione.VACCINO;
         }else {
             throw new BadRequestException("Tipo di prestazione non trovato.");
         }
 
-        if(request.getDataInizio().isBefore(LocalDateTime.now())){
+        //Verifico che la data di inizio non sia nel passato.
+        if(request.getDataInizio().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("Data nel passato.");
         }
 
-        //ci sarebbe da controllare se la data è fattibile o se tutti gli infermieri sono già occupati,però non lo facciamo e se 48h prima della prestazione, nessun infermiere ha accettato, allora la prenotazione viene annullata
+        //TODO ci sarebbe da controllare se la data è fattibile o se tutti gli infermieri sono già occupati,
+        // però non lo facciamo e se 48h prima della prestazione, nessun infermiere ha accettato,
+        // allora la prenotazione viene annullata.
+
+        //Crea l'oggetto Prestazione usando il pattern builder.
         Prestazione prestazione = Prestazione.builder()
                 .tipoPrestazione(tipoPrestazione)
                 .dataInizio(request.getDataInizio())
                 .dataFine(request.getDataInizio().plusMinutes(
+                        //Calcola la data di fine basandosi sul tipo di prestazione
                         tipoPrestazione.equals(TipoPrestazione.TAMPONE) ? 10 : 20
                 ))
-                .paziente(optionalUser.get())
+                .paziente(paziente.get())
                 .struttura(optionalStruttura.get())
                 .build();
 
+        //Salvo l'oggetto prestazione nel database.
         prestazioneRepository.save(prestazione);
     }
 
-    public List<PrestazioneResponse> getAllByPaziente(Long idPaziente){
+    /**
+     * Metodo per ottenere tutte le prestazioni registrate per un dato paziente.
+     * @param idPaziente Id del paziente di cui recuperare le prestazioni.
+     * @return Lista di DTO con i dati di ogni prestazione.
+     */
+    public List<PrestazioneResponse> getAllByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
         if(idPaziente < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(paziente.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, viene lanciata l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Utente non trovato.");
         }
 
+        //Recupero tutte le prestazioni dal database che corrispondono all'id del paziente trovato.
         List<Prestazione> prestazioni = prestazioneRepository.findAllByPaziente(paziente.get());
 
+        //Creo la lista di prestazioni.
         List<PrestazioneResponse> response = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
+        //Per ogni prestazione trovata, creo un oggetto PrestazioneResponse e la aggiungo alla lista.
+        for(Prestazione prestazione: prestazioni) {
             response.add(new PrestazioneResponse(
                     prestazione.getIdPrestazione(),
                     prestazione.getTipoPrestazione(),
@@ -118,63 +141,73 @@ public class PrestazioneService {
             ));
         }
 
-         return response;
-
+        //Restituisco il DTO.
+        return response;
     }
 
-    public void eliminaPrenotazione(Long idPrestazione){
+    /**
+     * Metodo per eliminare una prenotazione esistente.
+     * @param idPrestazione Id della prestazione da eliminare
+     */
+    public void eliminaPrenotazione(Long idPrestazione) {
 
         //Controllo che l'id parta da 1.
         if(idPrestazione < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo la prestazione dal database con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(prestazione.isEmpty()){
+        //Se non viene trovato alcuna prestazione con l'id fornito, viene lanciata l'eccezione.
+        if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
-        if(prestazione.get().getDataInizio().isBefore(LocalDateTime.now().plusHours(2))){
+        //Verifico che la prestazione non sia troppo vicina nel tempo per essere cancellata (meno di 2 ore prima dell'inizio).
+        if(prestazione.get().getDataInizio().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new BadRequestException("Impossibile eliminare la prestazione.");
         }
 
+        //Elimino la prestazione dal database.
         prestazioneRepository.deleteById(prestazione.get().getIdPrestazione());
 
-        if(prestazioneRepository.existsById(idPrestazione)){
+
+        //Verifico dopo l'eliminazione che la prestazione sia stata effettivamente rimossa.
+        if(prestazioneRepository.existsById(idPrestazione)) {
             throw new InternalServerErrorException("Errore nell'eliminazione.");
         }
-
     }
 
     /**
-     *
-     * @param idStruttura
-     * @return
+     * Metodo per ottenere tutte le prestazioni associate ad una specifica struttura.
+     * @param idStruttura Id della struttura per la quale recuperare le prestazioni.
+     * @return Lista di DTO con i dati di ogni prestazione.
      */
-    public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura){
+    public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura) {
 
         //Controllo che l'id parta da 1.
         if(idStruttura < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo la stuttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        //Se non viene trovata alcuna struttura con l'id fornito, lancio l'eccezione.
         if(struttura.isEmpty()){
             throw new NotFoundException("Struttura non trovata.");
         }
 
+        //Recupero tutte le prestazioni associate a quella struttura dal database.
         List<Prestazione> prestazioni = prestazioneRepository.findAllByStruttura(struttura.get());
 
+        //Creo la lista di prestazioni.
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
-            if(prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+        //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura senza infermiere assegnato.
+        for(Prestazione prestazione: prestazioni) {
+            if(prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -184,49 +217,68 @@ public class PrestazioneService {
                 ));
             }
         }
+
+        //Restituisco il DTO.
         return prestazioneResponse;
     }
 
-    public void presaInCarico(PresaInCaricoRequest request){
+
+    /**
+     * Meotodo che prende in carico la prestazione assegnando un infermiere.
+     * @param request DTO contente l'id dell'infermiere e della prestazione da prendere in carico.
+     */
+    public void presaInCarico(PresaInCaricoRequest request) {
 
         //Controllo che l'id parta da 1.
         if(request.getIdInfermiere() < 1 || request.getIdPrestazione() < 1 ) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Recupero l'infermiere dal database con l'id fornito.
         Optional<Utente> infermiere = userRepository.findById(request.getIdInfermiere());
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
+        //Se non viene trovato alcun infermiere con l'id fornito, lancio l'eccezione.
         if(infermiere.isEmpty()){
             throw new NotFoundException("Infermiere non trovato.");
         }
 
-        if(!infermiere.get().getRuolo().equals(Ruolo.INFERMIERE)){
+        //Controllo se il ruolo è quello di infermiere, altrimenti lancio l'eccezione.
+        if(!infermiere.get().getRuolo().equals(Ruolo.INFERMIERE)) {
             throw new BadRequestException("Ruolo non valido.");
         }
 
+        //Recupero la prestazione dal database con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(request.getIdPrestazione());
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(prestazione.isEmpty()){
+        //Se non viene trovata alcuna prestazione con l'id fornito, lancio l'eccezione.
+        if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
+        //Assegno l'infermiere alla prestazione.
         prestazione.get().setInfermiere(infermiere.get());
 
+        //Salvo la prestazione aggiornata nel database.
         prestazioneRepository.save(prestazione.get());
     }
 
-    public void esito(Long idPrestazione, EsitoRequest request){
+    /**
+     * Metodo che registra l'esito di una prestazione.
+     * @param idPrestazione Id della prestazione per la quale registrare l'esito.
+     * @param request DTO contenente l'esito della prestazione da registrare.
+     */
+    public void esito(Long idPrestazione, EsitoRequest request) {
 
+        //Controllo che l'id parta da 1.
         if(idPrestazione < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
+        //Recupero la prestazione dal database con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
 
-        if(prestazione.isEmpty()){
+        //Se non viene trovata alcuna prestazione con l'id fornito, lancio l'eccezione.
+        if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
@@ -234,6 +286,7 @@ public class PrestazioneService {
             throw new BadRequestException("Inserire l'esito della prestazione.");
         }
 
+        //Assegno un valore di EsitoPrestazione basato sull'esito fornito nella richiesta e lancio l'eccezione per esiti non validi.
         EsitoPrestazione esitoPrestazione = switch (request.getEsito()) {
             case "TAMPONE_POSITIVO" -> EsitoPrestazione.TAMPONE_POSITIVO;
             case "TAMPONE_NEGATIVO" -> EsitoPrestazione.TAMPONE_NEGATIVO;
@@ -241,15 +294,18 @@ public class PrestazioneService {
             default -> throw new BadRequestException("Esito non valido.");
         };
 
-        if(prestazione.get().getDataFine().isAfter(LocalDateTime.now())){
+        //Verifico che la data di fine della prestazione non sia nel futuro.
+        if(prestazione.get().getDataFine().isAfter(LocalDateTime.now())) {
             throw new BadRequestException("Data non valida.");
         }
 
+        //Imposto l'esito della prestazione recuperata dal database.
         prestazione.get().setEsito(esitoPrestazione);
 
+        //Salvo la prestazione aggiornata nel database.
         prestazioneRepository.save(prestazione.get());
 
-
+        //Notifica via publisher l'esito della prestazione utilizzando il tipo e l'esito.
         publisher.notify("ControlloEsito",
                 "",
                 "",
@@ -262,32 +318,41 @@ public class PrestazioneService {
                     case TAMPONE_NEGATIVO -> "Negativo";
                     case VACCINO_EFFETTUATO -> "Effettuato";
                 },
+
+                //Recupero l'indirizzo email del paziente associato alla prestazione corrente.
                 prestazione.get().getPaziente().getEmail()
         );
     }
 
-    public List<PrestazioneResponse> getPrenotazioniByPaziente(Long idPaziente){
-
+    /**
+     * Metodo che recupera tutte le prenotazioni future per uno specifico paziente dato il sui id.
+     * @param idPaziente Id del paziente di cui recuperare le prenotazioni.
+     * @return Lista di DTO che contiene i dati delle prestazioni future.
+     */
+    public List<PrestazioneResponse> getPrenotazioniByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
         if(idPaziente < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(paziente.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, viene lanciata l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Paziente non trovato.");
         }
 
+        //Recupero tutte le prestazioni associate al paziente specificato.
         List<Prestazione> prestazioni = prestazioneRepository.findAllByPaziente(paziente.get());
 
+        //Creo la lista di prestazioni.
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
-            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+        //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura.
+        for(Prestazione prestazione: prestazioni) {
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -297,11 +362,17 @@ public class PrestazioneService {
                 ));
             }
         }
-        return prestazioneResponse;
 
+        //Restituisco il DTO.
+        return prestazioneResponse;
     }
 
-    public List<PrestazioneResponse> getPrenotazioniByInfermiere(Long idInfermiere){
+    /**
+     * Metodo che recupera tutte le prenotazioni future gestite da un specifico infermiere.
+     * @param idInfermiere Id dell'infermiere di cui si vogliono ottenere le prenotazioni.
+     * @return Lista di DTO con i dettagli delle prenotazioni.
+     */
+    public List<PrestazioneResponse> getPrenotazioniByInfermiere(Long idInfermiere) {
 
 
         //Controllo che l'id parta da 1.
@@ -309,20 +380,23 @@ public class PrestazioneService {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo l'infermiere dal database con l'id fornito.
         Optional<Utente> infermiere = userRepository.findById(idInfermiere);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(infermiere.isEmpty()){
+        //Se non viene trovato alcun infermiere con l'id fornito, viene lanciata l'eccezione.
+        if(infermiere.isEmpty()) {
             throw new NotFoundException("Infermiere non trovato.");
         }
 
+        //Recupero tutte le prestazioni assegnate all'infermiere specificato.
         List<Prestazione> prestazioni = prestazioneRepository.findAllByInfermiere(infermiere.get());
 
+        //Creo una lista di prestazioni.
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
-            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
+        //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura.
+        for(Prestazione prestazione: prestazioni) {
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -332,31 +406,40 @@ public class PrestazioneService {
                 ));
             }
         }
-        return prestazioneResponse;
 
+        //Restituisco il DTO.
+        return prestazioneResponse;
     }
 
-    public List<PrestazioneResponse> storicoPrestazioniByPaziente(Long idPaziente){
+    /**
+     * Metodo che recupera lo storico delle prestazioni concluse di un specifico paziente.
+     * @param idPaziente Id del paziente di cui si desidera recuperare lo storico delle prestazioni.
+     * @return Lista di DTO i dettagli delle prestazioni concluse.
+     */
+    public List<PrestazioneResponse> storicoPrestazioniByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
         if(idPaziente < 1) {
             throw new BadRequestException("Id non corretto.");
         }
 
-        //Prendo l'utente dal database con l'id fornito.
+        //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
 
-        //Se non viene trovato alcun utente con l'id fornito, viene lanciata l'eccezione.
-        if(paziente.isEmpty()){
+        //Se non viene trovato alcun paziente con l'id fornito, viene lanciata l'eccezione.
+        if(paziente.isEmpty()) {
             throw new NotFoundException("Paziente non trovato.");
         }
 
+        //Recupero tutte le prestazioni concluse per il paziente.
         List<Prestazione> prestazioni = prestazioneRepository.findAllByPaziente(paziente.get());
 
+        //Creo una lista di prestazioni.
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
-            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito()!= null){
+        //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione conclusa con esito definito.
+        for(Prestazione prestazione: prestazioni) {
+            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito() != null ) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -366,18 +449,26 @@ public class PrestazioneService {
                 ));
             }
         }
-        return prestazioneResponse;
 
+        //Restituisco il DTO.
+        return prestazioneResponse;
     }
 
-    public List<PrestazioneResponse> storicoPrestazioni(){
+    /**
+     * Metodo che recupera l'elenco storico di tutte le prestazioni completate fino ad oggi.
+     * @return Lista di DTO contenente i dati di ciascuna prestazione completata.
+     */
+    public List<PrestazioneResponse> storicoPrestazioni() {
 
+        //Recupero tutte le prestazioni dal database.
         List<Prestazione> prestazioni = prestazioneRepository.findAll();
 
+        //Creo una lista di prestazioni.
         List<PrestazioneResponse> prestazioneResponse = new ArrayList<>();
 
-        for(Prestazione prestazione: prestazioni){
-            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito()!= null){
+        //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura.
+        for(Prestazione prestazione: prestazioni) {
+            if(prestazione.getDataFine().isBefore(LocalDateTime.now()) && prestazione.getEsito() != null ) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -387,7 +478,8 @@ public class PrestazioneService {
                 ));
             }
         }
-        return prestazioneResponse;
 
+        //Restituisco il DTO.
+        return prestazioneResponse;
     }
 }

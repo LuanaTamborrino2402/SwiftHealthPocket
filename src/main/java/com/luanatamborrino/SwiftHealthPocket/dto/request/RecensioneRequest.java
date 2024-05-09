@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class RecensioneRequest {
+
     private Integer valutazione;
 
     private String commento;

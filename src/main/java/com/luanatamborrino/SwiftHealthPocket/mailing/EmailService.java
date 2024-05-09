@@ -31,7 +31,7 @@ public class EmailService {
      * Metodo per l'invio di email basato su template configurabili.
      * @param request DTO che contiene le informazioni necessarie per l'invio dell'email.
      */
-    public void sendEmail(SendEmailRequest request){
+    public void sendEmail(SendEmailRequest request) {
 
         //Creo un nuovo oggetto MimeMessage per rappresentare un'email.
         MimeMessage message = emailSender.createMimeMessage();
@@ -61,7 +61,7 @@ public class EmailService {
             //Invio l'email.
             emailSender.send(message);
 
-        }catch(MessagingException | IOException | TemplateException e){
+        }catch(MessagingException | IOException | TemplateException e) {
 
             //Messaggio di errore in caso di eccezioni durante la creazione o l'invio dell'email
             throw new InternalServerErrorException("Errore durante l'invio dell'email");
