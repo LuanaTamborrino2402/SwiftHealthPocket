@@ -1,10 +1,11 @@
 package com.luanatamborrino.SwiftHealthPocket.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class PresaInCaricoRequest {
 
     private Long idInfermiere;

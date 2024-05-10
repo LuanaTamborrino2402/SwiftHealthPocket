@@ -17,6 +17,7 @@ import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
+import com.luanatamborrino.SwiftHealthPocket.util.Methods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +46,10 @@ public class PrestazioneService {
     public void prenotaPrestazione(PrenotaPrestazioneRequest request) {
 
         //Controllo che gli id di infermiere e struttura partano da 1.
-        if(request.getIdPaziente() < 1 || request.getIdStruttura() < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                request.getIdPaziente(),
+                request.getIdStruttura()
+        ));
 
         //Prendo dal database il paziente con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(request.getIdPaziente());
@@ -65,9 +67,9 @@ public class PrestazioneService {
             throw new NotFoundException("Struttura non trovata.");
         }
 
-        if(request.getTipoPrestazione().isBlank() && request.getTipoPrestazione().isEmpty()) {
-            throw new BadRequestException("Inserire il tipo di prestazione.");
-        }
+        Methods.getInstance().checkStringData(List.of(
+                request.getTipoPrestazione()
+        ));
 
         //Controllo se il tipo di prestazione è valido e poi lo assegno.
         TipoPrestazione tipoPrestazione;
@@ -112,9 +114,9 @@ public class PrestazioneService {
     public List<PrestazioneResponse> getAllByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
-        if(idPaziente < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPaziente
+        ));
 
         //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
@@ -152,9 +154,9 @@ public class PrestazioneService {
     public void eliminaPrenotazione(Long idPrestazione) {
 
         //Controllo che l'id parta da 1.
-        if(idPrestazione < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPrestazione
+        ));
 
         //Prendo la prestazione dal database con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
@@ -187,9 +189,9 @@ public class PrestazioneService {
     public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura) {
 
         //Controllo che l'id parta da 1.
-        if(idStruttura < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idStruttura
+        ));
 
         //Prendo la stuttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
@@ -230,9 +232,10 @@ public class PrestazioneService {
     public void presaInCarico(PresaInCaricoRequest request) {
 
         //Controllo che l'id parta da 1.
-        if(request.getIdInfermiere() < 1 || request.getIdPrestazione() < 1 ) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                request.getIdInfermiere(),
+                request.getIdPrestazione()
+        ));
 
         //Recupero l'infermiere dal database con l'id fornito.
         Optional<Utente> infermiere = userRepository.findById(request.getIdInfermiere());
@@ -270,9 +273,9 @@ public class PrestazioneService {
     public void esito(Long idPrestazione, EsitoRequest request) {
 
         //Controllo che l'id parta da 1.
-        if(idPrestazione < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPrestazione
+        ));
 
         //Recupero la prestazione dal database con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
@@ -282,9 +285,9 @@ public class PrestazioneService {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
-        if(request.getEsito().isBlank() || request.getEsito().isEmpty()){
-            throw new BadRequestException("Inserire l'esito della prestazione.");
-        }
+        Methods.getInstance().checkStringData(List.of(
+                request.getEsito()
+        ));
 
         //Assegno un valore di EsitoPrestazione basato sull'esito fornito nella richiesta e lancio l'eccezione per esiti non validi.
         EsitoPrestazione esitoPrestazione = switch (request.getEsito()) {
@@ -332,9 +335,9 @@ public class PrestazioneService {
     public List<PrestazioneResponse> getPrenotazioniByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
-        if(idPaziente < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPaziente
+        ));
 
         //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
@@ -376,9 +379,9 @@ public class PrestazioneService {
 
 
         //Controllo che l'id parta da 1.
-        if(idInfermiere < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idInfermiere
+        ));
 
         //Prendo l'infermiere dal database con l'id fornito.
         Optional<Utente> infermiere = userRepository.findById(idInfermiere);
@@ -419,9 +422,9 @@ public class PrestazioneService {
     public List<PrestazioneResponse> storicoPrestazioniByPaziente(Long idPaziente) {
 
         //Controllo che l'id parta da 1.
-        if(idPaziente < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPaziente
+        ));
 
         //Prendo il paziente dal database con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);

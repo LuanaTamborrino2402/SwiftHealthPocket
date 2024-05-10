@@ -13,6 +13,7 @@ import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
+import com.luanatamborrino.SwiftHealthPocket.util.Methods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +40,13 @@ public class StrutturaService {
     public void creaStruttura(CreaModificaStrutturaRequest request) {
 
         //Controllo se almeno un campo è vuoto.
-        if(request.getNome().isEmpty() || request.getNome().isBlank() ||
-                request.getCap() == null ||
-                request.getIndirizzo().isEmpty() || request.getIndirizzo().isBlank()) {
-            throw new BadRequestException("Campo non inserito.");
-        }
+        Methods.getInstance().checkIntegerData(List.of(
+                request.getCap()
+        ));
+        Methods.getInstance().checkStringData(List.of(
+                request.getNome(),
+                request.getIndirizzo()
+        ));
 
         //Controllo se il valore del campo "Cap" sia esattamente di 5 cifre, altrimenti lancio l'eccezione.
         if(String.valueOf(request.getCap()).length() != 5 ) {
@@ -70,9 +73,9 @@ public class StrutturaService {
     public StrutturaResponse getStrutturaData(Long idStruttura) {
 
         //Controllo che l'id parta da 1.
-        if(idStruttura < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idStruttura
+        ));
 
         //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
@@ -131,9 +134,9 @@ public class StrutturaService {
     public StrutturaResponse updateStruttura(Long idStruttura, CreaModificaStrutturaRequest request) {
 
         //Controllo che l'id parta da 1.
-        if(idStruttura < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idStruttura
+        ));
 
         //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> strutturaExists = strutturaRepository.findById(idStruttura);
@@ -181,9 +184,9 @@ public class StrutturaService {
     public void deleteStrutturaById(Long idStruttura) {
 
         //controllo che l'id parta da 1.
-        if(idStruttura < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idStruttura
+        ));
 
         //Prendo la struttura dal database con l'id fornito.
         Optional<Struttura> struttura = strutturaRepository.findById(idStruttura);
@@ -212,9 +215,10 @@ public class StrutturaService {
     public void associaInfermiere(AssociaDissociaInfermiereRequest request) {
 
         //controllo che l'id dell'infermiere e della struttura partano da 1.
-        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1 ) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                request.getIdInfermiere(),
+                request.getIdStruttura()
+        ));
 
         //Prendo l'infermiere dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());
@@ -259,12 +263,13 @@ public class StrutturaService {
      * Metodo che dissocia un infermiere da una struttura specificata.
      * @param request DTO con l'id dell'infermiere e della struttura.
      */
-    public void dissociaInfermiere(AssociaDissociaInfermiereRequest request ) {
+    public void dissociaInfermiere(AssociaDissociaInfermiereRequest request) {
 
         //Controllo che gli id dell'infermiere e della sturttura partano da 1.
-        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                request.getIdInfermiere(),
+                request.getIdStruttura()
+        ));
 
         //Prendo dal database l'infermiere con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());

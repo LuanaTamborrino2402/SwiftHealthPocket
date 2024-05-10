@@ -13,6 +13,7 @@ import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.observer.publisher.Publisher;
 import com.luanatamborrino.SwiftHealthPocket.repository.StrutturaRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
+import com.luanatamborrino.SwiftHealthPocket.util.Methods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,9 @@ public class UtenteService {
     public UserResponse getUserData(Long userId) {
 
         //Controllo che l'id parta da 1.
-        if(userId < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                userId
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> user = userRepository.findById(userId);
@@ -72,9 +73,9 @@ public class UtenteService {
     public void deleteUserById(Long userId) {
 
         //controllo che l'id parta da 1.
-        if(userId < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                userId
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> user = userRepository.findById(userId);
@@ -101,6 +102,10 @@ public class UtenteService {
      * @param email Email dell'utente da eliminare.
      */
     public void deleteUserByEmail(String email) {
+
+        Methods.getInstance().checkStringData(List.of(
+                email
+        ));
 
         //Ricerco l'utente corrispondente all'indirizzo email fornito.
         Optional<Utente> user = userRepository.findByEmail(email);
@@ -208,9 +213,9 @@ public class UtenteService {
     public UserResponse updateUserData(Long userId, UpdateUserDataRequest request) {
 
         //controllo che l'id parta da 1.
-        if(userId < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                userId
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
@@ -286,9 +291,9 @@ public class UtenteService {
     public void getDisponibilitaInfermiere(Long userId) {
 
         //controllo che l'id parta da 1.
-        if(userId < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                userId
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
@@ -316,9 +321,9 @@ public class UtenteService {
     public void richiestaCambioStruttura(Long userId) {
 
         //controllo che l'id parta da 1.
-        if(userId < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                userId
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(userId);
@@ -363,9 +368,10 @@ public class UtenteService {
     public void cambioForzatoStruttura(AssociaDissociaInfermiereRequest request) {
 
         //controllo che l'id dell'infermiere e della struttura partano da 1.
-        if(request.getIdInfermiere() < 1 || request.getIdStruttura() < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                request.getIdStruttura(),
+                request.getIdInfermiere()
+        ));
 
         //Prendo l'utente dal database con l'id fornito.
         Optional<Utente> optionalUser = userRepository.findById(request.getIdInfermiere());

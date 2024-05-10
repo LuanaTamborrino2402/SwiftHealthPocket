@@ -1,10 +1,11 @@
 package com.luanatamborrino.SwiftHealthPocket.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
+@Data
+@Builder
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 public class RecensioneRequest {
 
     private Integer valutazione;

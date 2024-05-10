@@ -8,6 +8,7 @@ import com.luanatamborrino.SwiftHealthPocket.dto.request.RegisterRequest;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
+import com.luanatamborrino.SwiftHealthPocket.util.Methods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -45,20 +47,19 @@ public class AuthenticationService {
             throw new BadRequestException("Ruolo non valido.");
         }
 
+        Methods.getInstance().checkStringData(List.of(
+                request.getNome(),
+                request.getCognome(),
+                request.getEmail(),
+                request.getPassword()
+        ));
+
         //Controllo se è già registrato un utente con quell'indirizzo email.
         Optional<Utente> utenteGiaRegistrato = repository.findByEmail(request.getEmail());
 
         //Se esiste, lancio un eccezione.
         if(utenteGiaRegistrato.isPresent()) {
             throw new ConflictException("Email già registrata.");
-        }
-
-        //Controllo se almeno un campo è vuoto.
-        if(request.getNome().isEmpty() || request.getNome().isBlank() ||
-                request.getPassword().isEmpty() || request.getPassword().isBlank() ||
-                request.getEmail().isEmpty() || request.getEmail().isBlank() ||
-                request.getCognome().isEmpty() || request.getCognome().isBlank()) {
-            throw new BadRequestException("Campo non inserito.");
         }
 
         //Costruisco l'oggetto utente con il pattern builder

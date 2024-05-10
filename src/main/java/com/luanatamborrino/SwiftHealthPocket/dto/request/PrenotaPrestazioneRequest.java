@@ -1,12 +1,13 @@
 package com.luanatamborrino.SwiftHealthPocket.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class PrenotaPrestazioneRequest {
 
     private String tipoPrestazione;

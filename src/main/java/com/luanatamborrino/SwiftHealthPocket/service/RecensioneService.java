@@ -11,6 +11,7 @@ import com.luanatamborrino.SwiftHealthPocket.model._enum.Ruolo;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.RecensioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
+import com.luanatamborrino.SwiftHealthPocket.util.Methods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,11 @@ public class RecensioneService {
      */
     public void salva(Long idPrestazione, RecensioneRequest request) {
 
-        //Controllo che l'id della prestazione parta da 1.
-        if(idPrestazione < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        //Controllo che l'id della prestazione e del paziente partano da 1.
+        Methods.getInstance().checkIds(List.of(
+                idPrestazione,
+                request.getIdPaziente()
+        ));
 
         //Prendo dal database la prestazione con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);
@@ -48,11 +50,6 @@ public class RecensioneService {
         //Se non viene trovata alcuna prestazione con l'id fornito, lancio l'eccezione.
         if(prestazione.isEmpty()) {
             throw new NotFoundException("Prestazione non trovata.");
-        }
-
-        //Controllo che l'id del paziente parta da 1.
-        if(request.getIdPaziente() < 1) {
-            throw new BadRequestException("Id non corretto.");
         }
 
         //Prendo dal database il paziente con l'id fornito.
@@ -69,11 +66,18 @@ public class RecensioneService {
         }
 
         //Verifico che il commento non sia vuoto, non contenga solo spazi bianchi e non superi i 1000 caratteri.
-        if(request.getCommento().isEmpty() || request.getCommento().isBlank() || request.getCommento().length() > 1000) {
+        Methods.getInstance().checkStringData(List.of(
+                request.getCommento()
+        ));
+        if(request.getCommento().length() > 1000) {
             throw new BadRequestException("Commento non valido.");
         }
 
         //Verifico che la valutazione sia compresa tra 1 e 5.
+        Methods.getInstance().checkIntegerData(List.of(
+                request.getValutazione()
+        ));
+
         if(request.getValutazione() < 1 || request.getValutazione() > 5) {
             throw new BadRequestException("Valutazione non valida.");
         }
@@ -104,9 +108,9 @@ public class RecensioneService {
     public List<RecensioneResponse> getAllByPaziente (Long idPaziente) {
 
         //Controllo che l'id parta da 1.
-        if(idPaziente < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPaziente
+        ));
 
         //Prendo dal database il paziente con l'id fornito.
         Optional<Utente> paziente = userRepository.findById(idPaziente);
@@ -150,9 +154,9 @@ public class RecensioneService {
     public RecensioneResponse getByPrestazioneId (Long idPrestazione) {
 
         //Controllo che l'id parta da 1.
-        if(idPrestazione < 1) {
-            throw new BadRequestException("Id non corretto.");
-        }
+        Methods.getInstance().checkIds(List.of(
+                idPrestazione
+        ));
 
         //Prendo dal database la prestazione con l'id fornito.
         Optional<Prestazione> prestazione = prestazioneRepository.findById(idPrestazione);

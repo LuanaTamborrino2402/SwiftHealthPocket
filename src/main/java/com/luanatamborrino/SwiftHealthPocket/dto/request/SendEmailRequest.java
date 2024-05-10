@@ -1,12 +1,13 @@
 package com.luanatamborrino.SwiftHealthPocket.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Map;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class SendEmailRequest {
 
     private String emailDestinatario;
