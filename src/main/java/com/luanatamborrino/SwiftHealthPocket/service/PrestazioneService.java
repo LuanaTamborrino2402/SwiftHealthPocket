@@ -134,13 +134,15 @@ public class PrestazioneService {
 
         //Per ogni prestazione trovata, creo un oggetto PrestazioneResponse e la aggiungo alla lista.
         for(Prestazione prestazione: prestazioni) {
-            response.add(new PrestazioneResponse(
-                    prestazione.getIdPrestazione(),
-                    prestazione.getTipoPrestazione(),
-                    prestazione.getEsito(),
-                    prestazione.getDataInizio(),
-                    prestazione.getDataFine()
-            ));
+            if(prestazione.getInfermiere() != null || prestazione.getDataInizio().isAfter(LocalDateTime.now().plusDays(2))) {
+                response.add(new PrestazioneResponse(
+                        prestazione.getIdPrestazione(),
+                        prestazione.getTipoPrestazione(),
+                        prestazione.getEsito(),
+                        prestazione.getDataInizio(),
+                        prestazione.getDataFine()
+                ));
+            }
         }
 
         //Restituisco il DTO.
@@ -182,7 +184,7 @@ public class PrestazioneService {
     }
 
     /**
-     * Metodo per ottenere tutte le prestazioni associate ad una specifica struttura.
+     * Metodo per ottenere tutte le prenotazioni, senza infermiere a carico, associate ad una specifica struttura.
      * @param idStruttura Id della struttura per la quale recuperare le prestazioni.
      * @return Lista di DTO con i dati di ogni prestazione.
      */
@@ -209,7 +211,8 @@ public class PrestazioneService {
 
         //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura senza infermiere assegnato.
         for(Prestazione prestazione: prestazioni) {
-            if(prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
+            if((prestazione.getDataInizio().isAfter(LocalDateTime.now()) && prestazione.getInfermiere() != null )
+                    || (prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now().plusDays(2)))) {
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -289,6 +292,21 @@ public class PrestazioneService {
                 request.getEsito()
         ));
 
+        //Verifico che la data di fine della prestazione non sia nel futuro.
+        if(prestazione.get().getDataFine().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Data non valida.");
+        }
+
+        if(prestazione.get().getInfermiere() == null){
+            throw new BadRequestException("Infermiere non associato");
+        }
+        if(request.getEsito().equals("VACCINO_EFFETTUATO") && prestazione.get().getTipoPrestazione().equals(TipoPrestazione.TAMPONE)
+                || request.getEsito().equals("TAMPONE_POSITIVO") && prestazione.get().getTipoPrestazione().equals(TipoPrestazione.VACCINO)
+                || request.getEsito().equals("TAMPONE_NEGATIVO") && prestazione.get().getTipoPrestazione().equals(TipoPrestazione.VACCINO)
+        ){
+            throw new BadRequestException("Prestazione non corrispondente.");
+        }
+
         //Assegno un valore di EsitoPrestazione basato sull'esito fornito nella richiesta e lancio l'eccezione per esiti non validi.
         EsitoPrestazione esitoPrestazione = switch (request.getEsito()) {
             case "TAMPONE_POSITIVO" -> EsitoPrestazione.TAMPONE_POSITIVO;
@@ -296,11 +314,6 @@ public class PrestazioneService {
             case "VACCINO_EFFETTUATO" -> EsitoPrestazione.VACCINO_EFFETTUATO;
             default -> throw new BadRequestException("Esito non valido.");
         };
-
-        //Verifico che la data di fine della prestazione non sia nel futuro.
-        if(prestazione.get().getDataFine().isAfter(LocalDateTime.now())) {
-            throw new BadRequestException("Data non valida.");
-        }
 
         //Imposto l'esito della prestazione recuperata dal database.
         prestazione.get().setEsito(esitoPrestazione);
@@ -328,7 +341,7 @@ public class PrestazioneService {
     }
 
     /**
-     * Metodo che recupera tutte le prenotazioni future per uno specifico paziente dato il sui id.
+     * Metodo che recupera tutte le prestazioni future per uno specifico paziente dato il sui id.
      * @param idPaziente Id del paziente di cui recuperare le prenotazioni.
      * @return Lista di DTO che contiene i dati delle prestazioni future.
      */
@@ -355,7 +368,8 @@ public class PrestazioneService {
 
         //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura.
         for(Prestazione prestazione: prestazioni) {
-            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
+            if((prestazione.getDataInizio().isAfter(LocalDateTime.now()) && prestazione.getInfermiere() != null )
+                    || (prestazione.getInfermiere() == null && prestazione.getDataInizio().isAfter(LocalDateTime.now().plusDays(2)))){
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),
@@ -371,7 +385,7 @@ public class PrestazioneService {
     }
 
     /**
-     * Metodo che recupera tutte le prenotazioni future gestite da un specifico infermiere.
+     * Metodo che recupera tutte le prestazioni future gestite da un specifico infermiere.
      * @param idInfermiere Id dell'infermiere di cui si vogliono ottenere le prenotazioni.
      * @return Lista di DTO con i dettagli delle prenotazioni.
      */
@@ -399,7 +413,7 @@ public class PrestazioneService {
 
         //Creo e aggiungo alla lista un oggetto PrestazioneResponse per ogni prestazione futura.
         for(Prestazione prestazione: prestazioni) {
-            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())) {
+            if(prestazione.getDataInizio().isAfter(LocalDateTime.now())){
                 prestazioneResponse.add(new PrestazioneResponse(
                         prestazione.getIdPrestazione(),
                         prestazione.getTipoPrestazione(),

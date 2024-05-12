@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller per le prestazioni.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/prestazione")
@@ -23,6 +26,11 @@ public class PrestazioneController {
 
     private final PrestazioneService prestazioneService;
 
+    /**
+     * Metodo che registra una nuova prenotazione per una prestazione.
+     * @param request DTO con i dati della prestazione da prenotare.
+     * @return Messaggio di risposta al client.
+     */
     @PostMapping("/prenota")
     public ResponseEntity<MessageResponse> prenota(@RequestBody PrenotaPrestazioneRequest request){
 
@@ -34,6 +42,11 @@ public class PrestazioneController {
 
     }
 
+    /**
+     * Metodo che ottiente tutte le recensioni associate a un paziente specifico.
+     * @param idPaziente Id del paziente per cui recuperare le prestazioni.
+     * @return Lista di DTO con i dati delle prestazioni.
+     */
     @GetMapping("/getAllByPaziente/{idPaziente}")
     public ResponseEntity<List<PrestazioneResponse>> getAllByPaziente(@PathVariable String idPaziente){
 
@@ -46,6 +59,11 @@ public class PrestazioneController {
                 .body(response);
     }
 
+    /**
+     * Metodo per eliminare una prenotazione esistente per una specifica prestazione
+     * @param idPrestazione Id della prestazione la cui prenotazione deve essere cancellata.
+     * @return Messaggio di risposta al client.
+     */
     @DeleteMapping("/eliminaPrenotazione/{idPrestazione}")
     public ResponseEntity<MessageResponse> eliminaPrenotazione(@PathVariable String idPrestazione){
 
@@ -58,6 +76,11 @@ public class PrestazioneController {
                 .body(new MessageResponse("Prenotazione eliminata."));
     }
 
+    /**
+     * Metodo per recuperare tutte le prenotazioni di prestazioni per una specifica struttura.
+     * @param idStruttura Id della struttura per cui recuperare le prenotazioni.
+     * @return Lista di DTO con i dati delle prenotazioni.
+     */
     @GetMapping("/getAllPrenotazioni/{idStruttura}")
     public ResponseEntity<List<PrestazioneResponse>> getAllPrenotazioni(@PathVariable String idStruttura){
 
@@ -70,6 +93,11 @@ public class PrestazioneController {
                 .body(response);
     }
 
+    /**
+     * Metodo che registra la presa in carico di una prestazione da parte di un infermiere.
+     * @param request DTO con i dati della presa in carico della prestazione.
+     * @return Messaggio di risposta al client.
+     */
     @PostMapping("/presaInCarico")
     public ResponseEntity<MessageResponse> presaInCarico(@RequestBody PresaInCaricoRequest request){
 
@@ -80,6 +108,12 @@ public class PrestazioneController {
                 .body(new MessageResponse("Prestazione presa in carico."));
     }
 
+    /**
+     * Metodo che registra l'esito di una prestazione.
+     * @param request DTO con i dati dell'esito da registrare.
+     * @param idPrestazione Id della prestazione per la quale l'esito deve essere registrato.
+     * @return Messaggio di risposta al client.
+     */
     @PostMapping("/esito/{idPrestazione}")
     public ResponseEntity<MessageResponse> esito(@RequestBody EsitoRequest request,@PathVariable String idPrestazione){
 
@@ -93,6 +127,11 @@ public class PrestazioneController {
 
     }
 
+    /**
+     * Metodo per ottenere tutte le prenotazioni di prestazioni per un dato paziente.
+     * @param idPaziente Id del paziente per cui recuperare tutte le prenotazioni.
+     * @return Lista di DTO con i dati delle prenotazioni.
+     */
     @GetMapping("/getPrenotazioniByPaziente/{idPaziente}")
     public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByPaziente(@PathVariable String idPaziente){
 
@@ -105,6 +144,11 @@ public class PrestazioneController {
                 .body(response);
     }
 
+    /**
+     * Metodo per cui recuperare tutte le prenotazioni gestite da un dato infermiere.
+     * @param idInfermiere Id dell'infermiere per cui recuperare le prenotazioni.
+     * @return Lista di DTO con i dati delle prenotazioni.
+     */
     @GetMapping("/getPrenotazioniByInfermiere/{idInfermiere}")
     public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByInfermiere(@PathVariable String idInfermiere){
 
@@ -117,6 +161,11 @@ public class PrestazioneController {
                 .body(response);
     }
 
+    /**
+     * Metodo per ottenere lo storico delle prestazioni per uno specifico paziente.
+     * @param idPaziente Id del paziente per cui recuperare lo storico delle prestazioni.
+     * @return Lista di DTO con lo storico delle prestazioni.
+     */
     @GetMapping("/storicoPrestazioni/{idPaziente}")
     public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(@PathVariable String idPaziente){
 
@@ -129,6 +178,10 @@ public class PrestazioneController {
                 .body(response);
     }
 
+    /**
+     *  Metodo che recupera lo storico di tutte le prestazioni nel sistema.
+     * @return Lista di DTO con lo storico delle prestazioni.
+     */
     @GetMapping("/storicoPrestazioni")
     public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(){
 

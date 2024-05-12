@@ -158,6 +158,11 @@ public class UserController {
 
     }
 
+    /**
+     * Metodo per cambiare forzatamente la struttura di un infermiere.
+     * @param request DTO con l'id della struttura e dell'infermiere.
+     * @return Messaggio di risposta al client.
+     */
     @PutMapping("/cambioForzatoStruttura")
     public ResponseEntity<MessageResponse> cambioForzatoStruttura(@RequestBody AssociaDissociaInfermiereRequest request){
 

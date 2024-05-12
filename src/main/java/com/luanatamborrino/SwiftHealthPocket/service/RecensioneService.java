@@ -103,7 +103,7 @@ public class RecensioneService {
     /**
      * Metodo che recupera tutte le recensioni fatte da un paziente specifico.
      * @param idPaziente Id del paziente di cui recupereare le recensioni.
-     * @return Lista di DTO che rappresentano le recensioni fatte dal paziente.
+     * @return Lista di DTO che rappresenta le recensioni fatte dal paziente.
      */
     public List<RecensioneResponse> getAllByPaziente (Long idPaziente) {
 

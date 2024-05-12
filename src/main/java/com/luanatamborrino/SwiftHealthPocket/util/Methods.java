@@ -45,5 +45,4 @@ public class Methods {
 /* TODO questa è la classe del pattern. Il pattern viene applicato all'interno di OGNI metodo di OGNI service per controllare
     la validità dei dati. Quindi, al posto di fare i soliti if "stringa".isBlank() || "stringa".isEmpty(), chiamiamo questo
      metodo tramite Methods.getInstance().
-     Prima di pushare questo pattern, ti consiglio di controllare OGNI singolo metodo su postman per vedere se
-     questi controlli funzionano correttamente. */
+     */
