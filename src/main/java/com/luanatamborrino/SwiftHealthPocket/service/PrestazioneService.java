@@ -499,4 +499,18 @@ public class PrestazioneService {
         //Restituisco il DTO.
         return prestazioneResponse;
     }
+
+    public List<Prestazione> cercaTampone(){
+
+        List<Prestazione> listaTamponi = prestazioneRepository.findAllByTipoPrestazione(TipoPrestazione.TAMPONE);
+
+        return listaTamponi;
+    }
+
+    public List<Prestazione> cercaVaccino(){
+
+        List<Prestazione> listaVaccini = prestazioneRepository.findAllByTipoPrestazione(TipoPrestazione.VACCINO);
+
+        return listaVaccini;
+    }
 }

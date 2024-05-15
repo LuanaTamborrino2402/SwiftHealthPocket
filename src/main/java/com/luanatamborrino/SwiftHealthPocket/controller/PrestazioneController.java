@@ -8,6 +8,8 @@ import com.luanatamborrino.SwiftHealthPocket.dto.response.PrestazioneResponse;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.EsitoPrestazione;
 import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.service.PrestazioneService;
+import com.luanatamborrino.SwiftHealthPocket.strategy.CercaPrestazioneStrategy;
+import com.luanatamborrino.SwiftHealthPocket.strategy.handler.CercaPrestazioneHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ import java.util.List;
 public class PrestazioneController {
 
     private final PrestazioneService prestazioneService;
+
+    private final CercaPrestazioneHandler cercaPrestazioneHandler;
 
     /**
      * Metodo che registra una nuova prenotazione per una prestazione.
@@ -186,6 +190,18 @@ public class PrestazioneController {
     public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(){
 
         List<PrestazioneResponse> response = prestazioneService.storicoPrestazioni();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/cerca/{tipoPrestazione}")
+    public ResponseEntity<List<PrestazioneResponse>> cercaPrestazioni(@PathVariable String tipoPrestazione){
+
+        CercaPrestazioneStrategy strategy = cercaPrestazioneHandler.scegliStrategy(tipoPrestazione);
+
+        List<PrestazioneResponse> response = cercaPrestazioneHandler.eseguiStrategy(strategy);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

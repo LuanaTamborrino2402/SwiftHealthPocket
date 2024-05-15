@@ -3,6 +3,7 @@ package com.luanatamborrino.SwiftHealthPocket.repository;
 import com.luanatamborrino.SwiftHealthPocket.model.Prestazione;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
+import com.luanatamborrino.SwiftHealthPocket.model._enum.TipoPrestazione;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface PrestazioneRepository extends JpaRepository<Prestazione, Long> 
      * @return Una lista di prestazioni gestite dall'infermiere specificato.
      */
     List<Prestazione> findAllByInfermiere(Utente infemiere);
+
+    List<Prestazione> findAllByTipoPrestazione(TipoPrestazione tipoPrestazione);
 }
