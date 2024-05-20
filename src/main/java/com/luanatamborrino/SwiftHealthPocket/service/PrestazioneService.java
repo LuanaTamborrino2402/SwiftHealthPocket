@@ -45,7 +45,7 @@ public class PrestazioneService {
      */
     public void prenotaPrestazione(PrenotaPrestazioneRequest request) {
 
-        //Controllo che gli id di infermiere e struttura partano da 1.
+        //Verifico che gli id di paziente e struttura siano validi e non nulli.
         Methods.getInstance().checkIds(List.of(
                 request.getIdPaziente(),
                 request.getIdStruttura()
@@ -67,6 +67,7 @@ public class PrestazioneService {
             throw new NotFoundException("Struttura non trovata.");
         }
 
+        //Invoco il metodo checkStringData per verificare che il campo 'tipoPrestazione' non sia vuoto o nullo.
         Methods.getInstance().checkStringData(List.of(
                 request.getTipoPrestazione()
         ));
@@ -113,7 +114,7 @@ public class PrestazioneService {
      */
     public List<PrestazioneResponse> getAllByPaziente(Long idPaziente) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di paziente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPaziente
         ));
@@ -155,7 +156,7 @@ public class PrestazioneService {
      */
     public void eliminaPrenotazione(Long idPrestazione) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di prestazione sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPrestazione
         ));
@@ -190,7 +191,7 @@ public class PrestazioneService {
      */
     public List<PrestazioneResponse> getAllPrenotazioni(Long idStruttura) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di struttura sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idStruttura
         ));
@@ -234,7 +235,7 @@ public class PrestazioneService {
      */
     public void presaInCarico(PresaInCaricoRequest request) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di infermiere e di prestazione siano validi e non nulli.
         Methods.getInstance().checkIds(List.of(
                 request.getIdInfermiere(),
                 request.getIdPrestazione()
@@ -275,7 +276,7 @@ public class PrestazioneService {
      */
     public void esito(Long idPrestazione, EsitoRequest request) {
 
-        //Controllo che l'id parta da 1.
+        ///Verifico che l'id di prestazione sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPrestazione
         ));
@@ -288,6 +289,7 @@ public class PrestazioneService {
             throw new NotFoundException("Prestazione non trovata.");
         }
 
+        //Invoco il metodo checkStringData per verificare che il campo 'esito' non sia vuoto o nullo.
         Methods.getInstance().checkStringData(List.of(
                 request.getEsito()
         ));
@@ -347,7 +349,7 @@ public class PrestazioneService {
      */
     public List<PrestazioneResponse> getPrenotazioniByPaziente(Long idPaziente) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di paziente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPaziente
         ));
@@ -391,8 +393,7 @@ public class PrestazioneService {
      */
     public List<PrestazioneResponse> getPrenotazioniByInfermiere(Long idInfermiere) {
 
-
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di infermiere sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idInfermiere
         ));
@@ -435,7 +436,7 @@ public class PrestazioneService {
      */
     public List<PrestazioneResponse> storicoPrestazioniByPaziente(Long idPaziente) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di paziente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPaziente
         ));
@@ -500,17 +501,30 @@ public class PrestazioneService {
         return prestazioneResponse;
     }
 
-    public List<Prestazione> cercaTampone(){
+    /**
+     * Metodo che recupera l'elenco di tutte le prestazioni che sono classificate come tamponi.
+     * @return Lista di oggetti Prestazione che rappresentano i tamponi trovati.
+     */
+    public List<Prestazione> cercaTampone() {
 
+        //Recupero tutte le prestazioni del tipo tampone.
+        //Chiamo il repository per trovare tutte le prestazioni del tipo specificato "TAMPONE".
         List<Prestazione> listaTamponi = prestazioneRepository.findAllByTipoPrestazione(TipoPrestazione.TAMPONE);
 
+        //Ritorna la lista di prestazioni trovate.
         return listaTamponi;
     }
 
-    public List<Prestazione> cercaVaccino(){
+    /**
+     * Metodo che recupera un elenco di tutte le prestazioni che sono classificate come vaccini.
+     * @return Lista di oggetti Prestazione che rappresentano i vaccini trovati.
+     */
+    public List<Prestazione> cercaVaccino() {
 
+        //Chiamo il repository per trovare tutte le prestazioni del tipo specificato "VACCINO".
         List<Prestazione> listaVaccini = prestazioneRepository.findAllByTipoPrestazione(TipoPrestazione.VACCINO);
 
+        //Ritorna la lista di prestazioni trovate.
         return listaVaccini;
     }
 }

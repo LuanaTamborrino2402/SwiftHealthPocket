@@ -28,7 +28,7 @@ public class UserController {
      * @return DTO con tutti i dati dell'utente richiesto.
      */
     @GetMapping("/getUserData/{id}")
-    public ResponseEntity<UserResponse> getUserData(@PathVariable String id){
+    public ResponseEntity<UserResponse> getUserData(@PathVariable String id) {
 
         long userId = Long.parseLong(id);
 
@@ -45,7 +45,7 @@ public class UserController {
      * @return Messaggio di risposta al client.
      */
     @DeleteMapping("/deleteUserById/{id}")
-    public ResponseEntity<MessageResponse> deleteUserById(@PathVariable String id){
+    public ResponseEntity<MessageResponse> deleteUserById(@PathVariable String id) {
 
         long userId = Long.parseLong(id);
 
@@ -62,7 +62,7 @@ public class UserController {
      * @return Messaggio di risposta al client.
      */
     @DeleteMapping("/deleteUserByEmail/{email}")
-    public ResponseEntity<MessageResponse> deleteUserByEmail(@PathVariable String email){
+    public ResponseEntity<MessageResponse> deleteUserByEmail(@PathVariable String email) {
 
         userService.deleteUserByEmail(email);
 
@@ -93,7 +93,7 @@ public class UserController {
      * @return Lista di DTO con i dati degli utenti con il ruolo specificato.
      */
     @GetMapping("/getAllUsersByRole/{ruolo}")
-    public ResponseEntity<List<UserResponse>> getAllUsersByRole(@PathVariable String ruolo){
+    public ResponseEntity<List<UserResponse>> getAllUsersByRole(@PathVariable String ruolo) {
 
         final List<UserResponse> response = userService.getAllUsersByRole(ruolo);
 
@@ -110,7 +110,9 @@ public class UserController {
      * @return DTO con i dati dell'utente modificati.
      */
     @PutMapping("/updateUserData/{id}")
-    public ResponseEntity<UserResponse> updateUserData(@PathVariable String id, @RequestBody UpdateUserDataRequest request){
+    public ResponseEntity<UserResponse> updateUserData(
+            @PathVariable String id,
+            @RequestBody UpdateUserDataRequest request) {
 
         long userId = Long.parseLong(id);
 
@@ -128,7 +130,7 @@ public class UserController {
      * @return Messaggio di risposta al client.
      */
     @GetMapping("/getDisponibilitaInfermiere/{id}")
-    public ResponseEntity<MessageResponse> getDisponibilitaInfermiere(@PathVariable String id){
+    public ResponseEntity<MessageResponse> getDisponibilitaInfermiere(@PathVariable String id) {
 
         long userId = Long.parseLong(id);
 
@@ -146,7 +148,7 @@ public class UserController {
      * @return Messaggio di risposta al client.
      */
     @GetMapping("/richiestaCambioStruttura/{id}")
-    public ResponseEntity<MessageResponse> richiestaCambioStruttura(@PathVariable String id){
+    public ResponseEntity<MessageResponse> richiestaCambioStruttura(@PathVariable String id) {
 
         long userId = Long.parseLong(id);
 
@@ -164,7 +166,7 @@ public class UserController {
      * @return Messaggio di risposta al client.
      */
     @PutMapping("/cambioForzatoStruttura")
-    public ResponseEntity<MessageResponse> cambioForzatoStruttura(@RequestBody AssociaDissociaInfermiereRequest request){
+    public ResponseEntity<MessageResponse> cambioForzatoStruttura(@RequestBody AssociaDissociaInfermiereRequest request) {
 
         userService.cambioForzatoStruttura(request);
 

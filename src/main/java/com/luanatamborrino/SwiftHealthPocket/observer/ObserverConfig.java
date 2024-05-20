@@ -24,7 +24,7 @@ public class ObserverConfig {
     private final RichiestaCambioStruttura richiestaCambioStruttura;
 
     /**
-     * Metodo che inizializza l'Observer facendo le subscirbe per ogni implementazione del listener.
+     * Metodo che inizializza l'Observer facendo le subscribe per ogni implementazione del publisher.
      */
     @Bean
     public void start() {
@@ -35,7 +35,7 @@ public class ObserverConfig {
     }
 
     /**
-     * L'annotazione @PreDestroy assicura che questo metodo venga invocato prima della chiusura dell'applicazioneper effettuare tutti gli unsubscribe.
+     * L'annotazione @PreDestroy garantisce l'esecuzione di questo metodo per rimuovere le sottoscrizioni prima che l'applicazione si chiuda.
      */
     @PreDestroy
     public void stop() {

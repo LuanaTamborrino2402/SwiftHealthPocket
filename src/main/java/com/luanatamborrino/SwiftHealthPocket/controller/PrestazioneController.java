@@ -27,16 +27,16 @@ import java.util.List;
 public class PrestazioneController {
 
     private final PrestazioneService prestazioneService;
-
     private final CercaPrestazioneHandler cercaPrestazioneHandler;
 
     /**
-     * Metodo che registra una nuova prenotazione per una prestazione.
+     * Metodo che registra una nuova prenotazione per una prestazione. Delega al service di gestione delle prestazioni
+     * il compito di registrare la prenotazione nel sistema.
      * @param request DTO con i dati della prestazione da prenotare.
      * @return Messaggio di risposta al client.
      */
     @PostMapping("/prenota")
-    public ResponseEntity<MessageResponse> prenota(@RequestBody PrenotaPrestazioneRequest request){
+    public ResponseEntity<MessageResponse> prenota(@RequestBody PrenotaPrestazioneRequest request) {
 
         prestazioneService.prenotaPrestazione(request);
 
@@ -52,11 +52,11 @@ public class PrestazioneController {
      * @return Lista di DTO con i dati delle prestazioni.
      */
     @GetMapping("/getAllByPaziente/{idPaziente}")
-    public ResponseEntity<List<PrestazioneResponse>> getAllByPaziente(@PathVariable String idPaziente){
+    public ResponseEntity<List<PrestazioneResponse>> getAllByPaziente(@PathVariable String idPaziente) {
 
         long id = Long.parseLong(idPaziente);
 
-       List<PrestazioneResponse> response = prestazioneService.getAllByPaziente(id);
+        List<PrestazioneResponse> response = prestazioneService.getAllByPaziente(id);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -64,12 +64,13 @@ public class PrestazioneController {
     }
 
     /**
-     * Metodo per eliminare una prenotazione esistente per una specifica prestazione
+     * Metodo per eliminare una prenotazione esistente per una specifica prestazione.
+     * Delega il service che eliminerà la prenotazione dal database.
      * @param idPrestazione Id della prestazione la cui prenotazione deve essere cancellata.
-     * @return Messaggio di risposta al client.
+     * @return Messaggio di avvenuta eliminazione.
      */
     @DeleteMapping("/eliminaPrenotazione/{idPrestazione}")
-    public ResponseEntity<MessageResponse> eliminaPrenotazione(@PathVariable String idPrestazione){
+    public ResponseEntity<MessageResponse> eliminaPrenotazione(@PathVariable String idPrestazione) {
 
         long id = Long.parseLong(idPrestazione);
 
@@ -81,12 +82,12 @@ public class PrestazioneController {
     }
 
     /**
-     * Metodo per recuperare tutte le prenotazioni di prestazioni per una specifica struttura.
+     * Metodo per recuperare tutte le prenotazioni per una specifica struttura.
      * @param idStruttura Id della struttura per cui recuperare le prenotazioni.
      * @return Lista di DTO con i dati delle prenotazioni.
      */
     @GetMapping("/getAllPrenotazioni/{idStruttura}")
-    public ResponseEntity<List<PrestazioneResponse>> getAllPrenotazioni(@PathVariable String idStruttura){
+    public ResponseEntity<List<PrestazioneResponse>> getAllPrenotazioni(@PathVariable String idStruttura) {
 
         long id = Long.parseLong(idStruttura);
 
@@ -99,11 +100,12 @@ public class PrestazioneController {
 
     /**
      * Metodo che registra la presa in carico di una prestazione da parte di un infermiere.
+     * Delega al service il compito di registrare questa presa in carico nel sistema.
      * @param request DTO con i dati della presa in carico della prestazione.
-     * @return Messaggio di risposta al client.
+     * @return Messaggio di avvenuta presa in carico.
      */
     @PostMapping("/presaInCarico")
-    public ResponseEntity<MessageResponse> presaInCarico(@RequestBody PresaInCaricoRequest request){
+    public ResponseEntity<MessageResponse> presaInCarico(@RequestBody PresaInCaricoRequest request) {
 
         prestazioneService.presaInCarico(request);
 
@@ -113,13 +115,16 @@ public class PrestazioneController {
     }
 
     /**
-     * Metodo che registra l'esito di una prestazione.
+     * Metodo che registra l'esito di una prestazione. Delega al service la responsabilità
+     * di aggiornare il record della prestazione dopo aver verificato i dati dell'esito.
      * @param request DTO con i dati dell'esito da registrare.
      * @param idPrestazione Id della prestazione per la quale l'esito deve essere registrato.
-     * @return Messaggio di risposta al client.
+     * @return Messaggio di avvenuto inserimento dell'esito.
      */
     @PostMapping("/esito/{idPrestazione}")
-    public ResponseEntity<MessageResponse> esito(@RequestBody EsitoRequest request,@PathVariable String idPrestazione){
+    public ResponseEntity<MessageResponse> esito(
+            @RequestBody EsitoRequest request,
+            @PathVariable String idPrestazione) {
 
         long id = Long.parseLong(idPrestazione);
 
@@ -137,7 +142,7 @@ public class PrestazioneController {
      * @return Lista di DTO con i dati delle prenotazioni.
      */
     @GetMapping("/getPrenotazioniByPaziente/{idPaziente}")
-    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByPaziente(@PathVariable String idPaziente){
+    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByPaziente(@PathVariable String idPaziente) {
 
         long id = Long.parseLong(idPaziente);
 
@@ -154,7 +159,7 @@ public class PrestazioneController {
      * @return Lista di DTO con i dati delle prenotazioni.
      */
     @GetMapping("/getPrenotazioniByInfermiere/{idInfermiere}")
-    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByInfermiere(@PathVariable String idInfermiere){
+    public ResponseEntity<List<PrestazioneResponse>> getPrenotazioniByInfermiere(@PathVariable String idInfermiere) {
 
         long id = Long.parseLong(idInfermiere);
 
@@ -171,7 +176,7 @@ public class PrestazioneController {
      * @return Lista di DTO con lo storico delle prestazioni.
      */
     @GetMapping("/storicoPrestazioni/{idPaziente}")
-    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(@PathVariable String idPaziente){
+    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(@PathVariable String idPaziente) {
 
         long id = Long.parseLong(idPaziente);
 
@@ -183,11 +188,11 @@ public class PrestazioneController {
     }
 
     /**
-     *  Metodo che recupera lo storico di tutte le prestazioni nel sistema.
-     * @return Lista di DTO con lo storico delle prestazioni.
+     * Metodo che recupera lo storico di tutte le prestazioni nel sistema.
+     * @return Lista di DTO con i dati di ciascuna prestazione.
      */
     @GetMapping("/storicoPrestazioni")
-    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(){
+    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni() {
 
         List<PrestazioneResponse> response = prestazioneService.storicoPrestazioni();
 
@@ -196,8 +201,14 @@ public class PrestazioneController {
                 .body(response);
     }
 
+
+    /**
+     * Metodo che effettua una ricerca di prestazioni sanitarie basata sul tipo indicato.
+     * @param tipoPrestazione Tipo di prestazione usato per determinare la strategia di ricerca.
+     * @return Lista di DTO con le prestazioni trovate.
+     */
     @GetMapping("/cerca/{tipoPrestazione}")
-    public ResponseEntity<List<PrestazioneResponse>> cercaPrestazioni(@PathVariable String tipoPrestazione){
+    public ResponseEntity<List<PrestazioneResponse>> cercaPrestazioni(@PathVariable String tipoPrestazione) {
 
         CercaPrestazioneStrategy strategy = cercaPrestazioneHandler.scegliStrategy(tipoPrestazione);
 

@@ -29,7 +29,9 @@ public class RecensioneController {
      * @return Messaggio di risposta al client.
      */
     @PostMapping("/salva/{idPrestazione}")
-    public ResponseEntity<MessageResponse> salva(@PathVariable String idPrestazione, @RequestBody RecensioneRequest request){
+    public ResponseEntity<MessageResponse> salva(
+            @PathVariable String idPrestazione,
+            @RequestBody RecensioneRequest request) {
 
         long id = Long.parseLong(idPrestazione);
 
@@ -47,7 +49,7 @@ public class RecensioneController {
      * @return Lista di DTO con i dati delle recensioni relative al paziente specificato.
      */
     @GetMapping("/getAllByPaziente/{idPaziente}")
-    public ResponseEntity<List<RecensioneResponse>> getAllByPaziente(@PathVariable String idPaziente){
+    public ResponseEntity<List<RecensioneResponse>> getAllByPaziente(@PathVariable String idPaziente) {
 
         long id = Long.parseLong(idPaziente);
 
@@ -59,12 +61,12 @@ public class RecensioneController {
     }
 
     /**
-     * Metodo che reucupera la recensione associata ad una specifica prestazione
+     * Metodo che recupera la recensione associata ad una specifica prestazione.
      * @param idPrestazione Id della prestazione per la quale reucperare la recensione
      * @return DTO con i dati della recensione.
      */
     @GetMapping("/getByPrestazioneId/{idPrestazione}")
-    public ResponseEntity<RecensioneResponse> getByPrestazioneId(@PathVariable String idPrestazione){
+    public ResponseEntity<RecensioneResponse> getByPrestazioneId(@PathVariable String idPrestazione) {
 
         long id = Long.parseLong(idPrestazione);
 

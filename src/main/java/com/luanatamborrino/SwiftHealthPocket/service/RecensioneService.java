@@ -12,6 +12,7 @@ import com.luanatamborrino.SwiftHealthPocket.repository.PrestazioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.RecensioneRepository;
 import com.luanatamborrino.SwiftHealthPocket.repository.UserRepository;
 import com.luanatamborrino.SwiftHealthPocket.util.Methods;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RecensioneService {
 
     private final RecensioneRepository recensioneRepository;
@@ -38,7 +40,7 @@ public class RecensioneService {
      */
     public void salva(Long idPrestazione, RecensioneRequest request) {
 
-        //Controllo che l'id della prestazione e del paziente partano da 1.
+        //Verifico che l'id di paziente e di prestazione siano validi e non nulli.
         Methods.getInstance().checkIds(List.of(
                 idPrestazione,
                 request.getIdPaziente()
@@ -65,19 +67,22 @@ public class RecensioneService {
             throw new BadRequestException("Ruolo non corretto.");
         }
 
-        //Verifico che il commento non sia vuoto, non contenga solo spazi bianchi e non superi i 1000 caratteri.
+        //Invoco il metodo checkStringData per verificare che il campo 'commento' non sia vuoto o nullo.
         Methods.getInstance().checkStringData(List.of(
                 request.getCommento()
         ));
+
+        //Controllo se la lunghezza del campo 'commento' supera il limite massimo di 1000 caratteri.
         if(request.getCommento().length() > 1000) {
             throw new BadRequestException("Commento non valido.");
         }
 
-        //Verifico che la valutazione sia compresa tra 1 e 5.
+        //Verifico che il campo 'valutazione' sia un dato intero valido.
         Methods.getInstance().checkIntegerData(List.of(
                 request.getValutazione()
         ));
 
+        //Verifico che la valutazione sia compresa tra 1 e 5.
         if(request.getValutazione() < 1 || request.getValutazione() > 5) {
             throw new BadRequestException("Valutazione non valida.");
         }
@@ -107,7 +112,7 @@ public class RecensioneService {
      */
     public List<RecensioneResponse> getAllByPaziente (Long idPaziente) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di paziente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPaziente
         ));
@@ -153,7 +158,7 @@ public class RecensioneService {
      */
     public RecensioneResponse getByPrestazioneId (Long idPrestazione) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di prestazione sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idPrestazione
         ));

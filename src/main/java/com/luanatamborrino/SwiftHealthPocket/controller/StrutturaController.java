@@ -28,7 +28,7 @@ public class StrutturaController {
      * @return Messaggio di avvenuta creazione.
      */
     @PostMapping("/creaStruttura")
-    public ResponseEntity<MessageResponse> creaStruttura (@RequestBody CreaModificaStrutturaRequest request){
+    public ResponseEntity<MessageResponse> creaStruttura (@RequestBody CreaModificaStrutturaRequest request) {
 
         strutturaService.creaStruttura(request);
 
@@ -45,7 +45,7 @@ public class StrutturaController {
      * @return DTO con i tutti i dati della struttura richiesta.
      */
     @GetMapping("/getStrutturaData/{id}")
-    public ResponseEntity<StrutturaResponse> getStrutturaData(@PathVariable String id){
+    public ResponseEntity<StrutturaResponse> getStrutturaData(@PathVariable String id) {
 
         long strutturaId = Long.parseLong(id);
 
@@ -78,7 +78,9 @@ public class StrutturaController {
      * @return DTO con i dati dell'utente modificati.
      */
     @PutMapping("/updateStruttura/{id}")
-    public ResponseEntity<StrutturaResponse> updateStruttura(@PathVariable String id, @RequestBody CreaModificaStrutturaRequest request){
+    public ResponseEntity<StrutturaResponse> updateStruttura(
+            @PathVariable String id,
+            @RequestBody CreaModificaStrutturaRequest request) {
 
         long strutturaId = Long.parseLong(id);
 
@@ -96,7 +98,7 @@ public class StrutturaController {
      * @return Messaggio di avvenuta eliminazione della struttura.
      */
     @DeleteMapping("/deleteStrutturaById/{id}")
-    public ResponseEntity<MessageResponse> deleteStrutturaById(@PathVariable String id){
+    public ResponseEntity<MessageResponse> deleteStrutturaById(@PathVariable String id) {
 
         long strutturaId = Long.parseLong(id);
 
@@ -108,12 +110,12 @@ public class StrutturaController {
     }
 
     /**
-     * Metodo che permetette di associare un infermiere ad una struttura.
+     * Metodo che permette di associare un infermiere ad una struttura specifica.
      * @param request DTO con i dati necessari per associare l'infermiere.
      * @return Messaggio di avvenuta associazione.
      */
     @PutMapping("/associaInfermiere")
-    public ResponseEntity<MessageResponse> associaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
+    public ResponseEntity<MessageResponse> associaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request) {
 
         strutturaService.associaInfermiere(request);
 
@@ -123,12 +125,12 @@ public class StrutturaController {
     }
 
     /**
-     * Metodo che permetette di dissociare un infermiere ad una struttura.
+     * Metodo che permetette di dissociare un infermiere da una struttura.
      * @param request DTO con i dati necessari per dissociare l'infermiere.
      * @return Messaggio di avvenuta dissociazione.
      */
     @PutMapping("/dissociaInfermiere")
-    public ResponseEntity<MessageResponse> dissociaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request){
+    public ResponseEntity<MessageResponse> dissociaInfermiere(@RequestBody AssociaDissociaInfermiereRequest request) {
 
         strutturaService.dissociaInfermiere(request);
 

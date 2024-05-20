@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EsitoRequest {
+
    private String esito;
 }
 

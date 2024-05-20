@@ -25,12 +25,12 @@ public class EmailConfiguration {
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        // Impostazione del server SMTP di Gmail come host di invio.
+        //Impostazione del server SMTP di Gmail come host di invio.
         mailSender.setHost("smtp.gmail.com");
-        // Utilizzo della porta SMTP standard per le connessioni sicure.
+        //Utilizzo della porta SMTP standard per le connessioni sicure.
         mailSender.setPort(587);
 
-        // Credenziali di accesso specifiche per questa applicazione.
+        //Credenziali di accesso specifiche per questa applicazione.
         mailSender.setUsername("swifthealthpocket@gmail.com");
         //Password generata appositamente per l'uso in sviluppo.
         mailSender.setPassword("yxhn bgjr pajb rhsz");
@@ -39,12 +39,12 @@ public class EmailConfiguration {
 
         //Configurazione del protocollo di trasporto
         props.put("mail.transport.protocol", "smtp");
-        // Attivazione dell'autenticazione per l'accesso al server SMTP.
+        //Attivazione dell'autenticazione per l'accesso al server SMTP.
         props.put("mail.smtp.auth", "true");
         /* Implementazione di STARTTLS per garantire una trasmissione dei dati
             criptata e sicura tra client e server. */
         props.put("mail.smtp.starttls.enable", "true");
-        // Attivazione del debug per monitorare il flusso di operazioni SMTP tramite log.
+        //Attivazione del debug per monitorare il flusso di operazioni SMTP tramite log.
         props.put("mail.debug", "true");
 
         return mailSender;
@@ -56,12 +56,12 @@ public class EmailConfiguration {
      * @return Configura e restituisce un bean di FreeMarkerConfigurationFactoryBean.
      */
     @Bean
-    @Primary
+    @Primary //Per risolvere delle ambiguità sulla scelta tra bean dello stesso tipo.
     public FreeMarkerConfigurationFactoryBean factoryBean() {
 
         FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
 
-        // Definizione del percorso dei template utilizzati da FreeMarker.
+        //Definizione del percorso dei template utilizzati da FreeMarker.
         bean.setTemplateLoaderPath("classpath:/templates");
 
         return bean;

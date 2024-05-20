@@ -42,7 +42,7 @@ public class UtenteService {
      */
     public UserResponse getUserData(Long userId) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di utente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 userId
         ));
@@ -72,7 +72,7 @@ public class UtenteService {
      */
     public void deleteUserById(Long userId) {
 
-        //controllo che l'id parta da 1.
+        //Verifico che l'id di utente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 userId
         ));
@@ -103,6 +103,7 @@ public class UtenteService {
      */
     public void deleteUserByEmail(String email) {
 
+        //Verifico che il campo 'email' non sia vuoto o nullo.
         Methods.getInstance().checkStringData(List.of(
                 email
         ));
@@ -136,12 +137,12 @@ public class UtenteService {
         //Prendo tutti gli utenti dal database.
         List<Utente> userList = userRepository.findAll();
 
-        //Se non vè presente nessun utetne, lancio l'eccezione.
+        //Se non è presente nessun utente, lancio l'eccezione.
         if(userList.isEmpty()) {
             throw new NotFoundException("Utenti non trovati.");
         }
 
-        //Creo la lists di utenti.
+        //Creo la lista di utenti.
         List<UserResponse> response = new ArrayList<>();
 
         //Per ogni utente trovato, creo un oggetto UserResponse e lo aggiungo alla lista.
@@ -212,7 +213,7 @@ public class UtenteService {
      */
     public UserResponse updateUserData(Long userId, UpdateUserDataRequest request) {
 
-        //controllo che l'id parta da 1.
+        //Verifico che l'id di utente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 userId
         ));
@@ -285,12 +286,12 @@ public class UtenteService {
     }
 
     /**
-     * Metodo cerca la disponibilità di un infermiere identificato dal suo id.
+     * Metodo che cerca la disponibilità di un infermiere identificato dal suo id.
      * @param userId Id dell'infermiere da cercare.
      */
     public void getDisponibilitaInfermiere(Long userId) {
 
-        //controllo che l'id parta da 1.
+        //Verifico che l'id di utente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 userId
         ));
@@ -320,7 +321,7 @@ public class UtenteService {
      */
     public void richiestaCambioStruttura(Long userId) {
 
-        //controllo che l'id parta da 1.
+        //Verifico che l'id di utente sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 userId
         ));

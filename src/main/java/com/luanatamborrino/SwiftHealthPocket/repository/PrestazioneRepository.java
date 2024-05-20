@@ -17,14 +17,14 @@ public interface PrestazioneRepository extends JpaRepository<Prestazione, Long> 
     /**
      * Recupera tutte le prestazioni associate a un dato paziente.
      * @param paziente L'oggetto Utente per cui recuperare le prestazioni.
-     * @return Una lista di prestazioni associate al paziente specificato.
+     * @return Una lista di Prestazioni associate al paziente specificato.
      */
     List<Prestazione> findAllByPaziente(Utente paziente);
 
     /**
      * Recupera tutte le prestazioni effettuate in una specifica struttura.
      * @param struttura L'oggetto Struttura per cui recuperare le prestazioni.
-     * @return Una lista di prestazioni svolte nella struttura specificata.
+     * @return Una lista di Prestazioni svolte nella struttura specificata.
      */
     List<Prestazione> findAllByStruttura(Struttura struttura);
 
@@ -35,5 +35,10 @@ public interface PrestazioneRepository extends JpaRepository<Prestazione, Long> 
      */
     List<Prestazione> findAllByInfermiere(Utente infemiere);
 
+    /**
+     * Recupera tutte le prestazioni che corrispondono a un tipo specificato di prestazione.
+     * @param tipoPrestazione Il tipo di prestazione per cui si desidera ottenere la lista corrispondente.
+     * @return Una lista di Prestazioni che corrispondono al tipo specificato.
+     */
     List<Prestazione> findAllByTipoPrestazione(TipoPrestazione tipoPrestazione);
 }

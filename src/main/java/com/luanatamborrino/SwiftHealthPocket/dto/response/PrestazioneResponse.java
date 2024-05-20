@@ -12,9 +12,13 @@ import java.time.LocalDateTime;
 public class PrestazioneResponse {
 
     private Long idPrestazione;
+
     private TipoPrestazione tipoPrestazione;
+
     private EsitoPrestazione esito;
+
     private LocalDateTime dataInizio;
+
     private LocalDateTime dataFine;
 
 }

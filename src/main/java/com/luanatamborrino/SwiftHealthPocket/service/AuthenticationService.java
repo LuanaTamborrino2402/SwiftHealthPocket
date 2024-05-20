@@ -47,6 +47,8 @@ public class AuthenticationService {
             throw new BadRequestException("Ruolo non valido.");
         }
 
+        //Invoco checkStringData per verificare la validità dei campi essenziali dell'utente.
+        //Assicuro che i valori per nome, cognome, email e password non siano vuoti o nulli.
         Methods.getInstance().checkStringData(List.of(
                 request.getNome(),
                 request.getCognome(),
@@ -104,7 +106,7 @@ public class AuthenticationService {
 
         //Restituisco una risposta di login contenente il token jwt generato per l'utente.
         return new LoginResponse(
-                "Benvenuto " + utente.getNome() + " " + utente.getCognome() + "! Il tuo accesso è stato verificato con successo e sei ora connesso al sistema.",
+                "Il tuo accesso è stato verificato con successo e sei ora connesso al sistema.",
                 jwtService.generateToken(utente)
         );
     }

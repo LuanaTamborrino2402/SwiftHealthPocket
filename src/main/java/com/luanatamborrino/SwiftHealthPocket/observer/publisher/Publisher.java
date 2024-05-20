@@ -7,16 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Publisher del pattern Observer. La classe espone dei metodi per
- * entrambi i pattern: subscribe, unsubscribe e notify per la gestione dei listeners dell'Observer;
+ * Handler del pattern Observer. Questa classe fornisce metodi fondamentali
+ * come subscribe, unsubscribe e notify per coordinare e gestire i publishers.
  */
 @Component
 public class Publisher {
 
+    //HashMap per tutte le implementazioni dei listeners.
     private Map<String, Subscriber> listeners = new HashMap<>();
 
     /**
-     * Metodo che permette di iscrivere un listener al publisher.
+     * Metodo che registra un subscriber per un tipo specifico di evento.
      * @param eventType Tipo dell'evento usato come chiave della mappa.
      * @param subscriber Implementazione dell'interfaccia del subscriber.
      */
@@ -26,7 +27,7 @@ public class Publisher {
     }
 
     /**
-     * Metodo per annullare l'iscrizione di un listener al publisher.
+     * Metodo per rimuovere tutti i subscriber associati a un tipo specifico di evento.
      * @param eventType Tipo dell'evento utilizzato per chiave della mappa.
      */
     public void unsubscribe(String eventType) {
@@ -35,10 +36,10 @@ public class Publisher {
     }
 
     /**
-     * Metodo che notifica i listeners di un dato cambiamento.
+     * Metodo che notifica i subscriber di un dato cambiamento.
      * @param eventType Tipo dell'evento utilizzato per chiave della mappa.
-     * @param nome Nome delpaziente che ha effettuato la prestazione.
-     * @param cognome Cognome del paziente che ha effettuato la prestazione.
+     * @param nome Nome dell'utente interessato dall'evento.
+     * @param cognome Cognome dell'utente interessato dall'evento.
      * @param tipoPrestazione Il tipo di prestazione che viene effettuata.
      * @param esito Esito inerente al tipo di prestazione effettuata.
      * @param emailDestinatario Email del destinatario a cui arriva la notifica.

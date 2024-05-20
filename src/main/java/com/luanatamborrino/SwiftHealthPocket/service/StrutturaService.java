@@ -39,10 +39,12 @@ public class StrutturaService {
      */
     public void creaStruttura(CreaModificaStrutturaRequest request) {
 
-        //Controllo se almeno un campo è vuoto.
+        //Verifico che il campo 'Cap' sia un dato intero valido.
         Methods.getInstance().checkIntegerData(List.of(
                 request.getCap()
         ));
+
+        //Verifico che i campi 'Nome' e 'Indirizzo' nella richiesta non siano vuoti o nulli.
         Methods.getInstance().checkStringData(List.of(
                 request.getNome(),
                 request.getIndirizzo()
@@ -72,7 +74,7 @@ public class StrutturaService {
      */
     public StrutturaResponse getStrutturaData(Long idStruttura) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di struttura sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idStruttura
         ));
@@ -133,7 +135,7 @@ public class StrutturaService {
      */
     public StrutturaResponse updateStruttura(Long idStruttura, CreaModificaStrutturaRequest request) {
 
-        //Controllo che l'id parta da 1.
+        //Verifico che l'id di struttura sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idStruttura
         ));
@@ -183,7 +185,7 @@ public class StrutturaService {
      */
     public void deleteStrutturaById(Long idStruttura) {
 
-        //controllo che l'id parta da 1.
+        //Verifico che l'id di struttura sia valido e non nullo.
         Methods.getInstance().checkIds(List.of(
                 idStruttura
         ));
@@ -214,7 +216,7 @@ public class StrutturaService {
      */
     public void associaInfermiere(AssociaDissociaInfermiereRequest request) {
 
-        //controllo che l'id dell'infermiere e della struttura partano da 1.
+        //Verifico che l'id di struttura e di infermiere siano validi e non nulli.
         Methods.getInstance().checkIds(List.of(
                 request.getIdInfermiere(),
                 request.getIdStruttura()
@@ -265,7 +267,7 @@ public class StrutturaService {
      */
     public void dissociaInfermiere(AssociaDissociaInfermiereRequest request) {
 
-        //Controllo che gli id dell'infermiere e della sturttura partano da 1.
+        //Verifico che l'id di struttura e di infermiere siano validi e non nulli.
         Methods.getInstance().checkIds(List.of(
                 request.getIdInfermiere(),
                 request.getIdStruttura()
