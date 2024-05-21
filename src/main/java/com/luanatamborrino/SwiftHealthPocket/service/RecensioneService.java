@@ -26,7 +26,6 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class RecensioneService {
 
     private final RecensioneRepository recensioneRepository;
@@ -93,13 +92,11 @@ public class RecensioneService {
         }
 
         //Creo l'oggetto Recensione con il pattern builder e lo salvo nel database.
-        Recensione recensione = Recensione.builder()
-                .valutazione(request.getValutazione())
-                .commento(request.getCommento())
-                .paziente(paziente.get())
-                .data(LocalDateTime.now())
-                .prestazione(prestazione.get())
-                .build();
+        Recensione recensione = prestazione.get().getRecensione();
+        recensione.setCommento(request.getCommento());
+        recensione.setValutazione(request.getValutazione());
+        recensione.setPaziente(paziente.get());
+        recensione.setData(LocalDateTime.now());
 
         //Salvo la recensione nel database.
         recensioneRepository.save(recensione);

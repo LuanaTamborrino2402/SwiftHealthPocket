@@ -8,6 +8,7 @@ import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
 import com.luanatamborrino.SwiftHealthPocket.exception.InternalServerErrorException;
 import com.luanatamborrino.SwiftHealthPocket.exception.NotFoundException;
 import com.luanatamborrino.SwiftHealthPocket.model.Prestazione;
+import com.luanatamborrino.SwiftHealthPocket.model.Recensione;
 import com.luanatamborrino.SwiftHealthPocket.model.Struttura;
 import com.luanatamborrino.SwiftHealthPocket.model.Utente;
 import com.luanatamborrino.SwiftHealthPocket.model._enum.EsitoPrestazione;
@@ -101,6 +102,7 @@ public class PrestazioneService {
                 ))
                 .paziente(paziente.get())
                 .struttura(optionalStruttura.get())
+                .recensione(new Recensione())
                 .build();
 
         //Salvo l'oggetto prestazione nel database.
