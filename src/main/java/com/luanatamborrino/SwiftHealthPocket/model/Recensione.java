@@ -7,6 +7,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Model che rappresenta la recensione sul database.
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

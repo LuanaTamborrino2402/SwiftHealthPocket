@@ -27,7 +27,7 @@ public class ExceptionHandlerController {
 
     /**
      * Handler delle eccezioni con status 403. Indica che il client non ha i permessi necessari.
-     * @param e Messaggio dell'eccezione
+     * @param e Messaggio dell'eccezione.
      * @return Risposta di errore al cliente con messaggio e status.
      */
     @ExceptionHandler(value = ForbiddenException.class)
@@ -40,7 +40,7 @@ public class ExceptionHandlerController {
 
     /**
      * Handler delle eccezioni con status 403. Indica che la risorsa richiesta non è stata trovata sul server.
-     * @param e Messaggio dell'eccezione
+     * @param e Messaggio dell'eccezione.
      * @return Risposta di errore al cliente con messaggio e status.
      */
     @ExceptionHandler(value = NotFoundException.class)
@@ -54,7 +54,7 @@ public class ExceptionHandlerController {
     /**
      * Handler delle eccezioni con status 409. Indica che il server non può completare la richiesta
      * a causa di un conflitto con lo stato attuale delle risorse sul server.
-     * @param e Messaggio dell'eccezione
+     * @param e Messaggio dell'eccezione.
      * @return Risposta di errore al cliente con messaggio e status.
      */
     @ExceptionHandler(value = ConflictException.class)
@@ -67,7 +67,7 @@ public class ExceptionHandlerController {
 
     /**
      * Handler delle eccezioni con status 500. Indica un errore generico sul lato server che impedisce di elaborare la richiesta.
-     * @param e Messaggio dell'eccezione
+     * @param e Messaggio dell'eccezione.
      * @return Risposta di errore al cliente con messaggio e status.
      */
     @ExceptionHandler(value = InternalServerErrorException.class)

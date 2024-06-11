@@ -6,6 +6,10 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model che rappresenta la struttura sul database.
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

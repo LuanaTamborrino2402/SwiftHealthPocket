@@ -58,11 +58,14 @@ public class CercaPrestazioneHandler {
      */
     public List<PrestazioneResponse> eseguiStrategy(CercaPrestazioneStrategy strategy){
 
-        //Eseguo
+        //Eseguo la ricerca delle prestazioni utilizzando la strategia fornita.
         List<Prestazione> prestazioni = strategy.cercaPrestazioni();
 
+        //Creo la lista di prestazioni.
         List<PrestazioneResponse> response= new ArrayList<>();
 
+        //Per ogni prestazione trovata, aggiunge alla lista solo le prestazioni con un infermiere assegnato o quelle future.
+        //Per ciascuna di queste prestazioni, creo un nuovo oggetto PrestazioneResponse e lo aggiungo alla lista di risposta.
         for(Prestazione prestazione: prestazioni){
             if(prestazione.getInfermiere() !=null || prestazione.getDataInizio().isAfter(LocalDateTime.now().plusDays(2))){
                 response.add(new PrestazioneResponse(
@@ -75,6 +78,7 @@ public class CercaPrestazioneHandler {
             }
         }
 
+        //Restituisco il DTO.
         return response;
     }
 }

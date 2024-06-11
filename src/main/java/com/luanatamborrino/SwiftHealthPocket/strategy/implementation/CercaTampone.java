@@ -15,10 +15,6 @@ public class CercaTampone implements CercaPrestazioneStrategy {
 
     private final PrestazioneService prestazioneService;
 
-    /**
-     * Metodo che effettua una ricerca di tamponi utilizzando il metodo cercaTampone di PrestazioneService.
-     * @return Lista di oggetti Prestazione che rappresentano i tamponi trovati.
-     */
     @Override
     public List<Prestazione> cercaPrestazioni() {
 

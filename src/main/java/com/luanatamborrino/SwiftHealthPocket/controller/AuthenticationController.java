@@ -40,7 +40,7 @@ public class AuthenticationController {
     }
 
     /**
-     * Metodo per la l'autenticazione di un utente. Chiama il service per verificare le credenziali dell'utente.
+     * Metodo per l'autenticazione di un utente. Chiama il service per verificare le credenziali dell'utente.
      * Se l'autenticazione ha successo, restituisce il token JWT nell'header della risposta HTTP
      * insieme ai dettagli dell'utente loggato.
      * @param request DTO con i dati per l'autenticazione.

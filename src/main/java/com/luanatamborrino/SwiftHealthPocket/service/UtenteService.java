@@ -67,7 +67,7 @@ public class UtenteService {
     }
 
     /**
-     * Metodo che, dato l'id, viene eliminato l'utente dal database.
+     * Metodo che dato l'id, viene eliminato l'utente dal database.
      * @param userId Id dell'utente da eliminare.
      */
     public void deleteUserById(Long userId) {
@@ -98,7 +98,7 @@ public class UtenteService {
     }
 
     /**
-     * Metodo che, dato l'indirizzo email, l'utente viene eliminato dal database.
+     * Metodo che dato l'indirizzo email, l'utente viene eliminato dal database.
      * @param email Email dell'utente da eliminare.
      */
     public void deleteUserByEmail(String email) {
@@ -286,7 +286,7 @@ public class UtenteService {
     }
 
     /**
-     * Metodo che cerca la disponibilità di un infermiere identificato dal suo id.
+     * Metodo che controlla se un infermiere è già associato ad una struttura o meno.
      * @param userId Id dell'infermiere da cercare.
      */
     public void getDisponibilitaInfermiere(Long userId) {
@@ -352,7 +352,8 @@ public class UtenteService {
             throw new ConflictException("Utente non ancora associato.");
         }
 
-        //Notifico via email l'evento "RichiestaCambioStruttura" all'amministratore, includendo nome e cognome dell'infermiere.
+        //Notifico l'amministratore di una richiesta di cambio struttura da parte di un utente,
+        //includendo nel messaggio il nome e il cognome dell'utente.
         publisher.notify("RichiestaCambioStruttura",
                 optionalUser.get().getNome(),
                 optionalUser.get().getCognome(),
@@ -363,7 +364,7 @@ public class UtenteService {
     }
 
     /**
-     * Metodo che modifica la struttura associata a un infermiere nel sistema
+     * Metodo che modifica la struttura associata a un infermiere nel sistema.
      * @param request DTO con l'id dell'infermiere e della nuova struttura a cui deve essere associato.
      */
     public void cambioForzatoStruttura(AssociaDissociaInfermiereRequest request) {

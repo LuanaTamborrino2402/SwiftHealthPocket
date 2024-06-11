@@ -47,7 +47,7 @@ public class PrestazioneController {
     }
 
     /**
-     * Metodo che ottiente tutte le recensioni associate a un paziente specifico.
+     * Metodo che ottiene tutte le recensioni associate a un paziente specifico.
      * @param idPaziente Id del paziente per cui recuperare le prestazioni.
      * @return Lista di DTO con i dati delle prestazioni.
      */
@@ -176,7 +176,7 @@ public class PrestazioneController {
      * @return Lista di DTO con lo storico delle prestazioni.
      */
     @GetMapping("/storicoPrestazioni/{idPaziente}")
-    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioni(@PathVariable String idPaziente) {
+    public ResponseEntity<List<PrestazioneResponse>> storicoPrestazioniByPaziente(@PathVariable String idPaziente) {
 
         long id = Long.parseLong(idPaziente);
 

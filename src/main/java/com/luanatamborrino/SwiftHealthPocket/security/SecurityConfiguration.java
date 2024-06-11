@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configurazione di spring security. Grazie all'annotazione "@Configuration",
+ * Configurazione di Spring Security. Grazie all'annotazione "@Configuration",
  * il contenuto di questa classe viene eseguito appena il server viene avviato.
  */
 @Configuration

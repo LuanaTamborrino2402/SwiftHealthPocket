@@ -5,9 +5,9 @@ import com.luanatamborrino.SwiftHealthPocket.exception.BadRequestException;
 import java.util.List;
 
 /**
- * Classe che implementa il pattern Singleton per fornire metodi di validazione comuni.
- * Questa classe è utilizzata per centralizzare le verifiche di validità sui dati in ingresso
- * nei vari servizi dell'applicazione.
+ * Classe che implementa il pattern Singleton per fornire metodi di validazione condivisi.
+ * Centralizza le verifiche di integrità dei dati in ingresso nei vari servizi dell'applicazione,
+ * garantendo coerenza e riusabilità delle validazioni.
  */
 public class Methods {
 
@@ -20,7 +20,7 @@ public class Methods {
      */
     public static Methods getInstance() {
 
-        //Se non esiste ancora un'istanza, la crea.
+        //Crea l'istanza se non esiste ancora.
         if(instance == null) {
             instance = new Methods();
         }
@@ -42,7 +42,7 @@ public class Methods {
 
     /**
      * Verifica l'integrità dei dati numerici (non siano nulli).
-     * @param data La lista di Integer da verificare.
+     * @param data La lista di interi da verificare.
      */
     public void checkIntegerData(List<Integer> data) {
         for(Integer i : data) {
@@ -64,8 +64,3 @@ public class Methods {
         }
     }
 }
-
-/* TODO questa è la classe del pattern. Il pattern viene applicato all'interno di OGNI metodo di OGNI service per controllare
-    la validità dei dati. Quindi, al posto di fare i soliti if "stringa".isBlank() || "stringa".isEmpty(), chiamiamo questo
-     metodo tramite Methods.getInstance().
-     */

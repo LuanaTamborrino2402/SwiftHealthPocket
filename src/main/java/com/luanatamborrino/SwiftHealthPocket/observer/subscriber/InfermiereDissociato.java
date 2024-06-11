@@ -18,7 +18,6 @@ public class InfermiereDissociato implements Subscriber {
 
     private final EmailService emailService;
 
-    //TODO CHIEDERE
     /**
      * Metodo invocato quando un infermiere viene dissociato da una prestazione. Questo metodo prepara e invia una notifica email
      * contenente i dettagli dell'infermiere dissociato.

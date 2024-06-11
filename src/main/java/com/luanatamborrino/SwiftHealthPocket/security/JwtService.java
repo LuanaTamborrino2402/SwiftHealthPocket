@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * ervice per gestire tutti i metodi riguardanti il jwt.
+ * Service per gestire tutti i metodi riguardanti il jwt.
  */
 @Service
 public class JwtService {
@@ -73,7 +73,7 @@ public class JwtService {
             .setClaims(extraClaims) //Aggiungo eventuali informazioni aggiuntive da codificare.
             .setSubject(userDetails.getUsername()) //Aggiungo l'attributo univoco dell'utente.
             .setIssuedAt(new Date(System.currentTimeMillis())) //Data di creazione del token.
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) //Data di scadenza del token.
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 300)) //Data di scadenza del token.
             .signWith(getSignInKey(), SignatureAlgorithm.HS256) //Codifico con la chiave segreta e specifico l'algoritmo.
             .compact(); //Genero il token.
     }
@@ -95,7 +95,7 @@ public class JwtService {
     }
 
     /**
-     *  Controlla se la data di scadenza del token è precedente a quella attuale.
+     * Controlla se la data di scadenza del token è precedente a quella attuale.
      * @param token Stringa jwt.
      * @return "true" se il token è scaduto, "false" se il token non è scaduto.
      */

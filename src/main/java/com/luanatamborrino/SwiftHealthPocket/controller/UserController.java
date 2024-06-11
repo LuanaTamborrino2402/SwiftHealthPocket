@@ -161,7 +161,7 @@ public class UserController {
     }
 
     /**
-     * Metodo per cambiare forzatamente la struttura di un infermiere.
+     * Metodo per cambiare forzatamente l'infermiere dalla struttura.
      * @param request DTO con l'id della struttura e dell'infermiere.
      * @return Messaggio di risposta al client.
      */

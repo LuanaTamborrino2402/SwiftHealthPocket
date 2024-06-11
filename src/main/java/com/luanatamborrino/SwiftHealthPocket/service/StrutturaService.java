@@ -314,7 +314,7 @@ public class StrutturaService {
             throw new NotFoundException("Amministratore non trovato.");
         }
 
-        //Notifico via email l'evento "InfermiereDissociato" all'amministratore, includendo nome e cognome dell'infermiere.
+        // Notifico via email l'amministratore che un infermiere è stato dissociato da una struttura.
         publisher.notify("InfermiereDissociato",
                 user.getNome(),
                 user.getCognome(),

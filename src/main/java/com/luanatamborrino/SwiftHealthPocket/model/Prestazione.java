@@ -7,6 +7,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Model che rappresenta la prestazione sul database.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -88,10 +88,6 @@ public class PrestazioneService {
             throw new BadRequestException("Data nel passato.");
         }
 
-        //TODO ci sarebbe da controllare se la data è fattibile o se tutti gli infermieri sono già occupati,
-        // però non lo facciamo e se 48h prima della prestazione, nessun infermiere ha accettato,
-        // allora la prenotazione viene annullata.
-
         //Crea l'oggetto Prestazione usando il pattern builder.
         Prestazione prestazione = Prestazione.builder()
                 .tipoPrestazione(tipoPrestazione)
@@ -325,7 +321,7 @@ public class PrestazioneService {
         //Salvo la prestazione aggiornata nel database.
         prestazioneRepository.save(prestazione.get());
 
-        //Notifica via publisher l'esito della prestazione utilizzando il tipo e l'esito.
+        //Notifico via email l'esito della prestazione al paziente.
         publisher.notify("ControlloEsito",
                 "",
                 "",

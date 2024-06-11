@@ -91,7 +91,8 @@ public class RecensioneService {
             throw new BadRequestException("Esito non presente.");
         }
 
-        //Creo l'oggetto Recensione con il pattern builder e lo salvo nel database.
+        //Aggiornaìo l'oggetto Recensione associato alla prestazione con i dati forniti nella richiesta,
+        //impostando il commento, la valutazione, il paziente e la data corrente
         Recensione recensione = prestazione.get().getRecensione();
         recensione.setCommento(request.getCommento());
         recensione.setValutazione(request.getValutazione());

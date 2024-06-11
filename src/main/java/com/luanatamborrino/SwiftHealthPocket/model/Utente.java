@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Model che rappresenta l'utente sul db. Implementa UserDetails, un'interfaccia
- * di Spring Security che espone una serie di metodi utili per la sicurezza.
+ * Model che rappresenta l'utente sul database. Implementa l'interfaccia UserDetails di Spring Security,
+ * fornendo metodi essenziali per la gestione della sicurezza.
  */
 
 @Data
@@ -65,7 +65,7 @@ public class Utente implements UserDetails {
     private List<Recensione> recensioni; //Lista di recensioni lasciate dal paziente.
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails. In base al ruolo, viene generata una lista delle funzionalità concesse.
+     * Metodo che viene ereditato dall'interfaccia UserDetails. Viene generata la lista delle funzionalità permesse in base al ruolo dell'utente.
      * @return I permessi dell'utente.
      */
     @Override
@@ -74,7 +74,7 @@ public class Utente implements UserDetails {
     }
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails.
+     * Metodo che viene ereditato dall'interfaccia UserDetails.
      * @return La password per l'autenticazione.
      */
     @Override
@@ -83,7 +83,7 @@ public class Utente implements UserDetails {
     }
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails.
+     * Metodo che viene ereditato dall'interfaccia UserDetails.
      * @return Il valore univoco per l'autenticazione.
      */
     @Override
@@ -92,37 +92,48 @@ public class Utente implements UserDetails {
     }
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails. Indica se l'account è scaduto. Un account scaduto non può autenticarsi.
+     * Metodo che viene ereditato dall'interfaccia UserDetails. Verifica se l'account è scaduto.
+     * Un account scaduto non è in grado di autenticarsi.
      * @return "true" se l'account è valido (non scaduto), "false" se non è valido(scaduto).
      */
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return true; //La scadenza del token non è gestita, pertanto restituisce sempre "true".
     }
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails. Indica se l'account dell'utente è bloccato o meno. Un account bloccato non può essere autenticato.
+     * Metodo che viene ereditato dall'interfaccia UserDetails. Verifica se l'account dell'utente è bloccato.
+     * Un account bloccato non può eseguire l'autenticazione.
      * @return "true" se l'account non è bloccato, "false" se l'account è bloccato.
      */
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; //Il blocco dell'account non è stato implementato, quindi restituisce sempre "true".
     }
     /**
-     * Metodo ereditato dall'interfaccia UserDetails. Indica se la password dell'utente è scaduta. La password scaduta non permette l'autenticazione.
+     * Metodo che viene ereditato dall'interfaccia UserDetails. Verifica se la password dell'utente è scaduta.
+     * Una password scaduta impedisce l'autenticazione.
      * @return "true" se la password è valida (non scaduta), "false" se non è più valida (scaduta).
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return true; //La scadenza delle credenziali non viene gestita, pertanto viene sempre restituito "true".
     }
 
     /**
-     * Metodo ereditato dall'interfaccia UserDetails. Indica se l'utente è abilitato o disabilitato. Un utente disabilitato non può essere autenticato.
+     * Metodo ereditato dall'interfaccia UserDetails. Verifica lo stato di abilitazione dell'utente.
+     * Un utente disabilitato non può effettuare l'autenticazione.
      * @return "true" se l'utente è abilitato, "false" se l'utente non è abilitato.
      */
     @Override
     public boolean isEnabled() {
-        return true;
+        return true; //La scadenza dell'abilitazione dell'utente non è implementata, quindi restituisce sempre "true".
+
+
+
+
+
+
+
     }
 }
